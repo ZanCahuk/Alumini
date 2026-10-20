@@ -1,0 +1,19 @@
+# Frontend
+node_modules/
+build/
+coverage/
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+
+# Backend
+target/
+.idea/
+*.iml
+.vscode/
+HELP.md
+*.log
