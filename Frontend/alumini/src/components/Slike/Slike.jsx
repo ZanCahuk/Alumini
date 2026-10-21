@@ -18,11 +18,19 @@ const Slike = () => {
         pridobiSlike();
     }, []);
 
+    const izbrisiSliko = (id) => {
+        if (!window.confirm("Ali res želite izbrisati sliko?")) return;
+        api.delete(`/slike/${id}`)
+            .then(() => setSlike((prev) => prev.filter((s) => s.id !== id)))
+            .catch((err) => console.error(err));
+    };
+
+
     return (
         <>
             <h1>Slike</h1>
             <Link to="/slike/dodaj"><Button variant="contained">Dodaj Sliko</Button> </Link>
-            <SlikeTable slike={slike} />
+            <SlikeTable slike={slike} onDelete={izbrisiSliko} />
         </>
     )
 }
