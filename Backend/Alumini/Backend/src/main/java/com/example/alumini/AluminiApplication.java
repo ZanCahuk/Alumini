@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class AluminiApplication {
 
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         SpringApplication.run(AluminiApplication.class, args);
     }
 
