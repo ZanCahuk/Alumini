@@ -3,6 +3,9 @@ package com.example.alumini.rest;
 import com.example.alumini.dao.SlikeDao;
 import com.example.alumini.vao.Slike;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +36,14 @@ public class SlikeController {
     @GetMapping("/slike/{id}")
     public Slike getSlike(@PathVariable("id") Integer id){
         return dao.findById(id).get();
+    }
+
+    @GetMapping("/slike/iskanje")
+    public PagedModel<Slike> iskanje(
+            @RequestParam(defaultValue = "") String q,
+            @PageableDefault(size = 5, sort = "id") Pageable pageable) {
+        return new PagedModel<>(
+                dao.findByNameContainingIgnoreCaseOrTypeContainingIgnoreCase(q, q, pageable));
     }
 
     @PutMapping("/slike/{id}")
