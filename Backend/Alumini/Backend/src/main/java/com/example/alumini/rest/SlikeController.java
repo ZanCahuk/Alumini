@@ -30,21 +30,21 @@ public class SlikeController {
         return dao.findAll();
     }
 
-    @GetMapping("/slike/{name}")
-    public Slike getSlike(@PathVariable("name") String name){
-        return dao.findById(name).get();
+    @GetMapping("/slike/{id}")
+    public Slike getSlike(@PathVariable("id") Integer id){
+        return dao.findById(id).get();
     }
 
-    @PutMapping("/slike/{name}")
-    public Slike updateSlike(@PathVariable("name") String name, @RequestBody Slike s){
-        s.setName(name);
+    @PutMapping("/slike/{id}")
+    public Slike updateSlike(@PathVariable("id") Integer id, @RequestBody Slike s){
+        s.setId(id);
         return dao.save(s);
     }
 
-    @DeleteMapping("/slike/{name}")
-    public void deleteSlike(@PathVariable String name) {
+    @DeleteMapping("/slike/{id}")
+    public void deleteSlike(@PathVariable Integer id) {
 
-        dao.deleteById(name);
+        dao.deleteById(id);
     }
 
     @DeleteMapping("/slike")

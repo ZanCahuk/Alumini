@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17
+    container_name: alumini-db
+    environment:
+      POSTGRES_DB: alumini
+      POSTGRES_USER: alumini
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - alumini-data:/var/lib/postgresql/data
+
+volumes:
+  alumini-data:
