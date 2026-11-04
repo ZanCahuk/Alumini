@@ -48,7 +48,7 @@ const VELIKOST_STRANI = 5;
 const Slike = () => {
     const [slike, setSlike] = useState([]);
     const [iskanje, setIskanje] = useState("");
-    const [stran, setStran] = useState(0);          // 0-based, kot v Springu
+    const [stran, setStran] = useState(0);          
     const [steviloStrani, setSteviloStrani] = useState(0);
     const [skupaj, setSkupaj] = useState(0);
 
@@ -58,7 +58,6 @@ const Slike = () => {
         })
             .then((res) => {
                 const { content, page } = res.data;
-                // če smo izbrisali zadnji zapis na strani, se vrnemo nazaj
                 if (content.length === 0 && stran > 0) {
                     setStran(stran - 1);
                     return;
@@ -83,7 +82,7 @@ const Slike = () => {
 
     const spremeniIskanje = (e) => {
         setIskanje(e.target.value);
-        setStran(0);                                 // nov iskalni niz → prva stran
+        setStran(0);                                 
     };
 
     return (
