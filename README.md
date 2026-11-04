@@ -55,17 +55,20 @@ Alumini je celovita (full-stack) aplikacija, sestavljena iz React odjemalca (fro
 
 ### Frontend
 
-> Točne različice preverite v `Frontend/.../package.json` in jih po potrebi popravite.
+Različice so povzete iz `package.json`.
 
 | Tehnologija | Različica |
 |---|---|
-| Node.js | LTS (npr. 22.x) |
-| React | _vpišite iz package.json_ |
-| react-router | 7.x |
-| Material UI (`@mui/material`) | _vpišite iz package.json_ |
-| Emotion (`@emotion/react`, `@emotion/styled`) | _vpišite iz package.json_ |
-| axios | _vpišite iz package.json_ |
-| Create React App (`react-scripts`) | _vpišite iz package.json_ |
+| Node.js | LTS v24.14.0 |
+| React / React DOM | ^19.3.1 |
+| react-router | ^7.18.4 |
+| Material UI (`@mui/material`) | ^9.5.0 |
+| Material UI ikone (`@mui/icons-material`) | ^9.5.0 |
+| Emotion (`@emotion/react`, `@emotion/styled`) | ^11.14.0, ^11.14.1 |
+| axios | ^1.20.0 |
+| Create React App (`react-scripts`) | 5.0.1 |
+| cross-env (razvojna odvisnost) | ^10.1.0 |
+| Testna orodja (`@testing-library/*`) | react ^16.3.3, jest-dom ^6.9.1, dom ^10.4.2, user-event ^13.5.0 |
 
 ### Infrastruktura in orodja
 
@@ -232,6 +235,8 @@ npm start
 ```
 
 Aplikacija se odpre na `http://localhost:3000`. Po vsaki spremembi `.env` je treba `npm start` ponovno zagnati.
+
+Skripta `npm start` privzeto odpre **Firefox** (`cross-env BROWSER=firefox`). Če Firefoxa nimate, v `package.json` zamenjajte `firefox` z drugim brskalnikom ali z `none` (brskalnik se ne odpre samodejno).
 
 ### Okoljske spremenljivke
 
