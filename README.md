@@ -59,7 +59,7 @@ Različice so povzete iz `package.json`.
 
 | Tehnologija | Različica |
 |---|---|
-| Node.js | LTS v24.14.0 |
+| Node.js | LTS (npr. 22.x) |
 | React / React DOM | ^19.3.1 |
 | react-router | ^7.18.4 |
 | Material UI (`@mui/material`) | ^9.5.0 |
@@ -99,7 +99,8 @@ Alumini/
 │           │   ├── dao/                      # repozitoriji (SlikeDao)
 │           │   └── vao/                      # entitete (Slike)
 │           └── resources/
-│               └── application.properties    # nastavitve strežnika in baze
+│               ├── application.properties                    # splošne nastavitve (brez gesla)
+│               └── application-local.properties.example      # primer lokalnih podatkov za bazo
 ├── Frontend/
 │   └── alumini/                      # React aplikacija
 │       ├── package.json              # odvisnosti in skripte
@@ -113,7 +114,8 @@ Alumini/
 │               ├── Routing/          # definicija poti
 │               ├── Slike/            # Slike, SlikeTable, DodajSliko, UrediSliko
 │               └── PageNotFound/     # stran 404
-├── docker-compose.yml                # PostgreSQL vsebnik
+├── docker-compose.yml                # PostgreSQL vsebnik (geslo iz .env)
+├── .env.example                      # primer .env za Docker (DB_PASSWORD)
 ├── .gitignore
 └── README.md
 ```
@@ -171,7 +173,22 @@ cd Alumini
 
 ### 2. Zagon baze (PostgreSQL v Dockerju)
 
-V korenski mapi (kjer je `docker-compose.yml`):
+Geslo za bazo ni v repozitoriju. Najprej ustvarite datoteko `.env` v korenski mapi (kjer je `docker-compose.yml`) tako, da kopirate primer:
+
+```bash
+# Windows (PowerShell)
+Copy-Item .env.example .env
+# Linux / macOS
+cp .env.example .env
+```
+
+V `.env` zamenjajte `CHANGE_ME` z lastnim geslom:
+
+```
+DB_PASSWORD=vase_geslo
+```
+
+Nato zaženite bazo:
 
 ```bash
 docker compose up -d
@@ -198,21 +215,39 @@ V mapi s `pom.xml`:
 
 Backend teče na `http://localhost:8080`. V dnevniku poiščite `Started AluminiApplication`.
 
-**Nastavitve (`src/main/resources/application.properties`):**
+**Podatki za bazo.** Pred prvim zagonom ustvarite `application-local.properties` (v isti mapi kot `application.properties`) tako, da kopirate primer:
+
+```bash
+# Windows (PowerShell)
+Copy-Item src\main\resources\application-local.properties.example src\main\resources\application-local.properties
+# Linux / macOS
+cp src/main/resources/application-local.properties.example src/main/resources/application-local.properties
+```
+
+V datoteki vpišite isto geslo kot v `.env`:
+
+```properties
+spring.datasource.username=alumini
+spring.datasource.password=vase_geslo
+```
+
+Datoteka `application-local.properties` je v `.gitignore` in se nikoli ne objavi.
+
+**Splošne nastavitve (`src/main/resources/application.properties`):**
 
 ```properties
 server.port=8080
 spring.application.name=Alumini
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/alumini
-spring.datasource.username=alumini
-spring.datasource.password=root
-
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
+
+# uporabnik in geslo baze se prebereta iz te datoteke (ni v Gitu)
+spring.config.import=optional:classpath:application-local.properties
 ```
 
-Uporabnik, geslo in ime baze se morajo ujemati z `docker-compose.yml`. Podane vrednosti so samo za lokalni razvoj.
+Uporabnik (`alumini`), geslo in ime baze se morajo ujemati z `docker-compose.yml` in `.env`.
 
 ### 4. Zagon frontenda
 
@@ -243,7 +278,9 @@ Skripta `npm start` privzeto odpre **Firefox** (`cross-env BROWSER=firefox`). Č
 | Spremenljivka | Kje | Pomen | Primer |
 |---|---|---|---|
 | `REACT_APP_BASE_URL` | Frontend `.env` | naslov backenda | `http://localhost:8080` |
-| `spring.datasource.*` | `application.properties` | povezava z bazo | glej zgoraj |
+| `DB_PASSWORD` | `.env` v korenski mapi | geslo baze v Dockerju | `vase_geslo` |
+| `spring.datasource.username` / `password` | `application-local.properties` | prijava backenda v bazo | glej zgoraj |
+| `spring.datasource.url` | `application.properties` | naslov baze | `jdbc:postgresql://localhost:5432/alumini` |
 | `JAVA_HOME` | sistem | pot do JDK 25 | `C:\Program Files\Eclipse Adoptium\jdk-25...` |
 
 ### Pogoste težave
@@ -253,7 +290,8 @@ Skripta `npm start` privzeto odpre **Firefox** (`cross-env BROWSER=firefox`). Č
 | `ExceptionInInitializerError` / `Could not initialize class lombok.javac.Javac` | uporabljate napačen JDK; nastavite JDK 25 |
 | `cannot find symbol ... setId` pri `mvnw` | preverite `annotationProcessorPaths` za Lombok v `pom.xml` |
 | `Port 8080 was already in use` | ustavite drug proces ali spremenite `server.port` |
-| `password authentication failed` | geslo v `application.properties` ni enako geslu v `docker-compose.yml` |
+| `password authentication failed` | geslo v `application-local.properties` ni enako `DB_PASSWORD` v `.env`; če ste geslo spremenili po prvem zagonu, ponovno ustvarite bazo z `docker compose down -v` in `docker compose up -d` |
+| Docker javi `The "DB_PASSWORD" variable is not set` | manjka `.env` v korenski mapi (kopirajte `.env.example`) |
 | `Unable to determine Dialect` | baza ne teče ali povezava ni pravilna |
 | 404 v Reactu na `/slike` | manjka `.env` z `REACT_APP_BASE_URL` |
 | `Module not found: axios` | zaženite `npm install` |
@@ -309,7 +347,7 @@ Oblika: `tip: kratek opis v ukazni obliki`
 ### Pravila
 
 - Neposredno v `main` ne potrjujemo sprememb, uporabimo Pull Request.
-- V repozitorij ne dodajamo `node_modules/`, `target/`, `.env` ali skrivnosti.
+- V repozitorij ne dodajamo `node_modules/`, `target/`, `.env`, `application-local.properties` ali drugih skrivnosti. Za vsako skrivnost dodamo `.example` datoteko s ponarejeno vrednostjo.
 - Pred objavo preverite, ali se backend in frontend zaženeta.
 
 ---
@@ -341,7 +379,7 @@ Oblika: `tip: kratek opis v ukazni obliki`
 - Kratke, jasne funkcije z eno nalogo.
 - Imena naj opisujejo namen (`izbrisiSliko`, ne `fn1`).
 - Komentarji pojasnjujejo *zakaj*, ne *kaj*.
-- Nobenih gesel ali ključev v kodi, ki ni namenjena samo lokalnemu razvoju.
+- Nobenih gesel ali ključev v kodi ali v datotekah, ki jih objavimo; skrivnosti so v `.env` in `application-local.properties`.
 
 ---
 
