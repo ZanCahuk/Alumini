@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: alumini
       POSTGRES_USER: alumini
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

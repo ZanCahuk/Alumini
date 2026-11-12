@@ -2,14 +2,25 @@
 
 Spletna aplikacija za upravljanje zbirke slik (dodajanje, urejanje, brisanje, iskanje in paginacija zapisov).
 
+## Člani skupine
+
+| Ime in priimek |
+|---|
+| Žan Čahuk |
+| Uroš Kuhar |
+| Žiga Raus |
+
 ## Kazalo
 
 1. [O projektu](#o-projektu)
-2. [Uporabljene tehnologije](#uporabljene-tehnologije)
-3. [Struktura projekta](#struktura-projekta)
-4. [Navodila za nameščanje in zagon](#navodila-za-nameščanje-in-zagon)
-5. [Navodila za razvijalce](#navodila-za-razvijalce)
-6. [Standardi kodiranja](#standardi-kodiranja)
+2. [Vizija projekta](#vizija-projekta)
+3. [Besednjak](#besednjak)
+4. [Diagram primerov uporabe](#diagram-primerov-uporabe)
+5. [Uporabljene tehnologije](#uporabljene-tehnologije)
+6. [Struktura projekta](#struktura-projekta)
+7. [Navodila za nameščanje in zagon](#navodila-za-nameščanje-in-zagon)
+8. [Navodila za razvijalce](#navodila-za-razvijalce)
+9. [Standardi kodiranja](#standardi-kodiranja)
 
 ---
 
@@ -34,6 +45,141 @@ Alumini je celovita (full-stack) aplikacija, sestavljena iz React odjemalca (fro
 | Brisanje | Potrditveno okno in osvežitev seznama |
 | Iskanje | Iskanje po imenu ali tipu (brez razlikovanja velikih in malih črk) |
 | Paginacija | Strani se izračunajo v bazi (`LIMIT` / `OFFSET`) |
+
+---
+
+## Vizija projekta
+
+### Opis rešitve
+
+Alumini je spletna galerija slik za alumni skupnost (npr. diplomante fakultete). Fotografije z dogodkov, generacij in skupnih trenutkov so danes razpršene po zasebnih albumih, družbenih omrežjih in e-poštnih sporočilih. Alumini jih zbere na enem mestu, kjer jih lahko člani skupnosti dodajo, uredijo, razvrstijo v albume, poiščejo in komentirajo.
+
+**Kaj želimo doseči:**
+
+- alumnom olajšati obujanje spominov in ohranjanje stikov,
+- skupnosti zagotoviti urejen, preiskljiv in trajen arhiv fotografij,
+- upravljavcem omogočiti nadzor nad vsebino.
+
+**Komu je namenjena:**
+
+| Skupina | Kaj dobi |
+|---|---|
+| Uporabniki (alumni) | pregled, iskanje, razvrščanje, dodajanje, urejanje in brisanje slik, albumi in komentarji |
+| Administratorji | moderiranje vsebine (odstranjevanje neprimernih slik in komentarjev) |
+
+### Ključne funkcionalnosti
+
+| Funkcionalnost | Opis | Stanje |
+|---|---|---|
+| Pregled slik | seznam slik po straneh | implementirano |
+| Iskanje slik | iskanje po imenu ali tipu | implementirano |
+| Dodajanje slike | vnos novega zapisa o sliki | implementirano |
+| Urejanje slike | sprememba podatkov o sliki | implementirano |
+| Brisanje slike | odstranitev zapisa s potrditvijo | implementirano |
+| Nalaganje slikovnih datotek | shranjevanje datoteke skupaj z zapisom | načrtovano |
+| Razvrščanje slik | razvrščanje po imenu, tipu, velikosti ali času | načrtovano |
+| Albumi | združevanje slik v zbirke po dogodkih ali generacijah | načrtovano |
+| Komentarji | komentiranje slik | načrtovano |
+| Moderiranje | odstranjevanje neprimerne vsebine | načrtovano |
+
+Podroben opis načrtovanih primerov uporabe je v [docs/primeri-uporabe.md](docs/primeri-uporabe.md).
+
+### Obseg rešitve in morebitne omejitve
+
+**V obsegu:**
+
+- upravljanje slik in njihovih metapodatkov (dodajanje, urejanje, brisanje),
+- pregled z iskanjem, razvrščanjem in paginacijo,
+- albumi in komentarji,
+- moderiranje vsebine.
+
+**Izven obsega:**
+
+- videoposnetki in drugi formati razen slik,
+- zasebna sporočila in drugi družabni elementi,
+- mobilna aplikacija,
+- plačljive storitve.
+
+**Omejitve trenutne različice:**
+
+- hranijo se samo metapodatki (ime, tip, velikost), ne pa slikovne datoteke,
+- aplikacija nima uporabniških računov in prijave, zato lahko vsak spreminja in briše zapise,
+- iskanje deluje samo po imenu in tipu,
+- aplikacija teče lokalno (baza v Dockerju), brez produkcijske namestitve,
+- uporabniški vmesnik je samo v slovenščini.
+
+---
+
+## Besednjak
+
+| Pojem | Razlaga |
+|---|---|
+| Alumn | nekdanji študent oziroma diplomant, član skupnosti, ki mu je aplikacija namenjena |
+| Alumni skupnost | skupina vseh alumnov, ki jim je aplikacija namenjena |
+| Uporabnik | alumn, ki uporablja aplikacijo za pregledovanje in upravljanje slik |
+| Administrator | uporabnik s pravico moderiranja vsebine |
+| Slika | osrednji zapis v sistemu: slikovna datoteka skupaj z metapodatki |
+| Metapodatki slike | podatki o sliki: ime, tip in velikost (načrtovano tudi opis in čas dodajanja) |
+| Tip slike | format slikovne datoteke (npr. jpg, png, gif) |
+| Velikost slike | velikost datoteke (npr. 2MB) |
+| Album | poimenovana zbirka slik (npr. dogodek ali generacija) |
+| Komentar | kratko besedilo, ki ga uporabnik objavi pod sliko |
+| Moderiranje | pregled in odstranjevanje neprimernih slik ali komentarjev |
+
+---
+
+## Diagram primerov uporabe
+
+Diagram prikazuje načrtovano različico aplikacije (10 primerov uporabe, 2 akterja). Administrator lahko izvaja tudi vse primere uporabe uporabnika.
+
+```mermaid
+flowchart LR
+    Uporabnik["🎓 Uporabnik"]
+    Admin["🛠 Administrator"]
+
+    subgraph Sistem["Alumini"]
+        PU1(["PU1 Pregled slik"])
+        PU2(["PU2 Iskanje slik"])
+        PU3(["PU3 Dodajanje slike"])
+        PU4(["PU4 Urejanje slike"])
+        PU5(["PU5 Brisanje slike"])
+        PU6(["PU6 Nalaganje slikovne datoteke"])
+        PU7(["PU7 Razvrščanje slik"])
+        PU8(["PU8 Ustvarjanje albuma"])
+        PU9(["PU9 Komentiranje slike"])
+        PU10(["PU10 Moderiranje vsebine"])
+    end
+
+    Uporabnik --- PU1
+    Uporabnik --- PU3
+    Uporabnik --- PU4
+    Uporabnik --- PU5
+    Uporabnik --- PU8
+    Uporabnik --- PU9
+
+    Admin --- PU10
+
+    PU2 -.->|"«extend»"| PU1
+    PU7 -.->|"«extend»"| PU1
+
+    PU3 -.->|"«include»"| PU6
+    PU10 -.->|"«include»"| PU5
+```
+
+| ID | Primer uporabe | Akter | Povezava | Stanje |
+|---|---|---|---|---|
+| PU1 | Pregled slik | uporabnik | | implementirano |
+| PU2 | Iskanje slik | uporabnik | razširja PU1 | implementirano |
+| PU3 | Dodajanje slike | uporabnik | vključuje PU6 | implementirano (brez datoteke) |
+| PU4 | Urejanje slike | uporabnik | | implementirano |
+| PU5 | Brisanje slike | uporabnik | | implementirano |
+| PU6 | Nalaganje slikovne datoteke | uporabnik | vključena v PU3 | načrtovano |
+| PU7 | Razvrščanje slik | uporabnik | razširja PU1 | načrtovano |
+| PU8 | Ustvarjanje albuma | uporabnik | | načrtovano |
+| PU9 | Komentiranje slike | uporabnik | | načrtovano |
+| PU10 | Moderiranje vsebine | administrator | vključuje PU5 | načrtovano |
+
+Podrobni opisi še neimplementiranih primerov uporabe (PU6 do PU10) so v [docs/primeri-uporabe.md](docs/primeri-uporabe.md).
 
 ---
 
@@ -380,9 +526,3 @@ Oblika: `tip: kratek opis v ukazni obliki`
 - Imena naj opisujejo namen (`izbrisiSliko`, ne `fn1`).
 - Komentarji pojasnjujejo *zakaj*, ne *kaj*.
 - Nobenih gesel ali ključev v kodi ali v datotekah, ki jih objavimo; skrivnosti so v `.env` in `application-local.properties`.
-
----
-
-## Avtor
-
-Žan Čahuk, FERI, predmet RIS.
