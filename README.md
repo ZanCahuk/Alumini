@@ -132,52 +132,28 @@ Podroben opis načrtovanih primerov uporabe je v [docs/primeri-uporabe.md](docs/
 
 Diagram prikazuje načrtovano različico aplikacije (10 primerov uporabe, 2 akterja). Administrator lahko izvaja tudi vse primere uporabe uporabnika.
 
-```mermaid
-flowchart LR
-    Uporabnik["🎓 Uporabnik"]
-    Admin["🛠 Administrator"]
-
-    subgraph Sistem["Alumini"]
-        PU1(["PU1 Pregled slik"])
-        PU2(["PU2 Iskanje slik"])
-        PU3(["PU3 Dodajanje slike"])
-        PU4(["PU4 Urejanje slike"])
-        PU5(["PU5 Brisanje slike"])
-        PU6(["PU6 Nalaganje slikovne datoteke"])
-        PU7(["PU7 Razvrščanje slik"])
-        PU8(["PU8 Ustvarjanje albuma"])
-        PU9(["PU9 Komentiranje slike"])
-        PU10(["PU10 Moderiranje vsebine"])
-    end
-
-    Uporabnik --- PU1
-    Uporabnik --- PU3
-    Uporabnik --- PU4
-    Uporabnik --- PU5
-    Uporabnik --- PU8
-    Uporabnik --- PU9
-
-    Admin --- PU10
-
-    PU2 -.->|"«extend»"| PU1
-    PU7 -.->|"«extend»"| PU1
-
-    PU3 -.->|"«include»"| PU6
-    PU10 -.->|"«include»"| PU5
-```
+![Diagram primerov uporabe](Slike/Use_case_diagram.png)
 
 | ID | Primer uporabe | Akter | Povezava | Stanje |
 |---|---|---|---|---|
-| PU1 | Pregled slik | uporabnik | | implementirano |
-| PU2 | Iskanje slik | uporabnik | razširja PU1 | implementirano |
+| PU1 | Pregled osebnih slik | uporabnik |  | implementirano |
+| PU2 | Iskanje osebnih slik | uporabnik | razširja PU1 | implementirano |
 | PU3 | Dodajanje slike | uporabnik | vključuje PU6 | implementirano (brez datoteke) |
-| PU4 | Urejanje slike | uporabnik | | implementirano |
-| PU5 | Brisanje slike | uporabnik | | implementirano |
-| PU6 | Nalaganje slikovne datoteke | uporabnik | vključena v PU3 | načrtovano |
-| PU7 | Razvrščanje slik | uporabnik | razširja PU1 | načrtovano |
-| PU8 | Ustvarjanje albuma | uporabnik | | načrtovano |
-| PU9 | Komentiranje slike | uporabnik | | načrtovano |
-| PU10 | Moderiranje vsebine | administrator | vključuje PU5 | načrtovano |
+| PU4 | Urejanje slike | uporabnik | Razširja PU1 | implementirano |
+| PU5 | Nalaganje slikovne datoteke | uporabnik | vključena v PU3 | načrtovano |
+| PU6 | Razvrščanje slik | uporabnik | razširja PU1 | načrtovano |
+| PU7 | Ustvarjanje albuma | uporabnik | | načrtovano |
+| PU8 | Pregled osebnih albumov | uporabnik | | načrtovano |
+| PU9 | Iskanje osebnega albuma | uporabnik | Razširja PU9 | načrtovano |
+| PU10 | Objava albuma | uporabnik | Razširja PU9 | načrtovano |
+| PU11 | Gledanje albumov ostalih uporabnikov (feed) | uporabnik |  | načrtovano |
+| PU12 | Iskanje albuma | uporabnik |  | načrtovano |
+| PU13 | Ogled albuma | uporabnik | Razširja PU12, PU13 | načrtovano |
+| PU14 | Ogled profila | uporabnik | | načrtovano |
+| PU15 | Urejanje osebnih podatkov | uporabnik | Razširja PU15 | načrtovano |
+| PU16 | Urejanje uporabniških profilov | administrator || načrtovano |
+| PU17 | Urejanje albumov | administrator |  | načrtovano |
+
 
 Podrobni opisi še neimplementiranih primerov uporabe (PU6 do PU10) so v [docs/primeri-uporabe.md](docs/primeri-uporabe.md).
 
