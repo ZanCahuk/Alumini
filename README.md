@@ -35,7 +35,7 @@ Alumini je celovita (full-stack) aplikacija, sestavljena iz React odjemalca (fro
 - iskanje po imenu ali tipu in strežniška paginacija (5 zapisov na stran),
 - jasna ločitev med odjemalcem, REST API-jem in bazo.
 
-**Funkcionalnosti:**
+**Funkcionalnosti (trenutna različica):**
 
 | Funkcionalnost | Opis |
 |---|---|
@@ -52,58 +52,65 @@ Alumini je celovita (full-stack) aplikacija, sestavljena iz React odjemalca (fro
 
 ### Opis rešitve
 
-Alumini je spletna galerija slik za alumni skupnost (npr. diplomante fakultete). Fotografije z dogodkov, generacij in skupnih trenutkov so danes razpršene po zasebnih albumih, družbenih omrežjih in e-poštnih sporočilih. Alumini jih zbere na enem mestu, kjer jih lahko člani skupnosti dodajo, uredijo, razvrstijo v albume, poiščejo in komentirajo.
+Alumini je spletna galerija slik za alumni skupnost (npr. diplomante fakultete). Fotografije z dogodkov, generacij in skupnih trenutkov so danes razpršene po zasebnih albumih, družbenih omrežjih in e-poštnih sporočilih. Alumini jih zbere na enem mestu: vsak član skupnosti ima svoj profil, v katerem dodaja, ureja, išče in razvršča svoje slike, jih združuje v albume in albume objavi. Objavljeni albumi drugih alumnov so vidni v skupnem feedu in pri iskanju albumov.
 
 **Kaj želimo doseči:**
 
 - alumnom olajšati obujanje spominov in ohranjanje stikov,
 - skupnosti zagotoviti urejen, preiskljiv in trajen arhiv fotografij,
-- upravljavcem omogočiti nadzor nad vsebino.
+- upravljavcem omogočiti nadzor nad albumi in uporabniškimi profili.
 
 **Komu je namenjena:**
 
 | Skupina | Kaj dobi |
 |---|---|
-| Uporabniki (alumni) | pregled, iskanje, razvrščanje, dodajanje, urejanje in brisanje slik, albumi in komentarji |
-| Administratorji | moderiranje vsebine (odstranjevanje neprimernih slik in komentarjev) |
+| Uporabniki (alumni) | upravljanje osebnih slik (pregled, iskanje, razvrščanje, dodajanje z nalaganjem datoteke, urejanje), ustvarjanje, pregled, iskanje in objava osebnih albumov, feed in iskanje albumov ostalih uporabnikov, ogled profila in urejanje osebnih podatkov |
+| Administratorji | vse, kar lahko uporabnik, ter urejanje albumov in uporabniških profilov vseh uporabnikov |
 
 ### Ključne funkcionalnosti
 
-| Funkcionalnost | Opis | Stanje |
-|---|---|---|
-| Pregled slik | seznam slik po straneh | implementirano |
-| Iskanje slik | iskanje po imenu ali tipu | implementirano |
-| Dodajanje slike | vnos novega zapisa o sliki | implementirano |
-| Urejanje slike | sprememba podatkov o sliki | implementirano |
-| Brisanje slike | odstranitev zapisa s potrditvijo | implementirano |
-| Nalaganje slikovnih datotek | shranjevanje datoteke skupaj z zapisom | načrtovano |
-| Razvrščanje slik | razvrščanje po imenu, tipu, velikosti ali času | načrtovano |
-| Albumi | združevanje slik v zbirke po dogodkih ali generacijah | načrtovano |
-| Komentarji | komentiranje slik | načrtovano |
-| Moderiranje | odstranjevanje neprimerne vsebine | načrtovano |
+Stolpec PU se sklicuje na tabelo pod [diagramom primerov uporabe](#diagram-primerov-uporabe).
 
-Podroben opis načrtovanih primerov uporabe je v [docs/primeri-uporabe.md](docs/primeri-uporabe.md).
+| Funkcionalnost | Opis | PU | Stanje |
+|---|---|---|---|
+| Pregled slik | seznam slik po straneh | PU1 | implementirano (brez uporabniških računov) |
+| Iskanje slik | iskanje po imenu ali tipu | PU2 | implementirano |
+| Dodajanje slike | vnos novega zapisa o sliki | PU3 | implementirano (brez datoteke) |
+| Urejanje slike | sprememba podatkov o sliki | PU4 | implementirano |
+| Brisanje slike | odstranitev zapisa s potrditvijo | – | implementirano (manjka v diagramu) |
+| Nalaganje slikovnih datotek | shranjevanje datoteke skupaj z zapisom | PU5 | načrtovano |
+| Razvrščanje slik | razvrščanje po imenu, tipu, velikosti ali času | PU6 | načrtovano |
+| Osebni albumi | ustvarjanje, pregled in iskanje lastnih albumov | PU7–PU9 | načrtovano |
+| Objava albuma | album postane viden ostalim uporabnikom | PU10 | načrtovano |
+| Feed in iskanje albumov | pregled, iskanje in ogled objavljenih albumov ostalih uporabnikov | PU11–PU13 | načrtovano |
+| Uporabniški profil | ogled profila in urejanje osebnih podatkov | PU14, PU15 | načrtovano |
+| Administracija | urejanje uporabniških profilov in albumov | PU16, PU17 | načrtovano |
+
+Podroben opis vseh načrtovanih primerov uporabe je v [primeri-uporabe.md](primeri-uporabe.md).
 
 ### Obseg rešitve in morebitne omejitve
 
 **V obsegu:**
 
-- upravljanje slik in njihovih metapodatkov (dodajanje, urejanje, brisanje),
+- upravljanje osebnih slik in njihovih metapodatkov (dodajanje z nalaganjem datoteke, urejanje, brisanje),
 - pregled z iskanjem, razvrščanjem in paginacijo,
-- albumi in komentarji,
-- moderiranje vsebine.
+- osebni albumi in njihova objava,
+- feed in iskanje objavljenih albumov ostalih uporabnikov,
+- uporabniški profili,
+- administracija albumov in uporabniških profilov.
 
 **Izven obsega:**
 
 - videoposnetki in drugi formati razen slik,
-- zasebna sporočila in drugi družabni elementi,
+- komentarji, zasebna sporočila in drugi družabni elementi,
 - mobilna aplikacija,
 - plačljive storitve.
 
 **Omejitve trenutne različice:**
 
 - hranijo se samo metapodatki (ime, tip, velikost), ne pa slikovne datoteke,
-- aplikacija nima uporabniških računov in prijave, zato lahko vsak spreminja in briše zapise,
+- aplikacija nima uporabniških računov in prijave, zato so vse slike skupne in lahko vsak spreminja in briše zapise,
+- albumi, profili in administracija še niso implementirani,
 - iskanje deluje samo po imenu in tipu,
 - aplikacija teče lokalno (baza v Dockerju), brez produkcijske namestitve,
 - uporabniški vmesnik je samo v slovenščini.
@@ -116,46 +123,49 @@ Podroben opis načrtovanih primerov uporabe je v [docs/primeri-uporabe.md](docs/
 |---|---|
 | Alumn | nekdanji študent oziroma diplomant, član skupnosti, ki mu je aplikacija namenjena |
 | Alumni skupnost | skupina vseh alumnov, ki jim je aplikacija namenjena |
-| Uporabnik | alumn, ki uporablja aplikacijo za pregledovanje in upravljanje slik |
-| Administrator | uporabnik s pravico moderiranja vsebine |
+| Uporabnik | alumn z uporabniškim profilom, ki v aplikaciji upravlja svoje slike in albume ter pregleduje objavljene albume drugih |
+| Administrator | uporabnik z dodatno pravico urejanja albumov in uporabniških profilov vseh uporabnikov |
 | Slika | osrednji zapis v sistemu: slikovna datoteka skupaj z metapodatki |
+| Osebne slike | slike, ki jih je dodal prijavljeni uporabnik |
 | Metapodatki slike | podatki o sliki: ime, tip in velikost (načrtovano tudi opis in čas dodajanja) |
 | Tip slike | format slikovne datoteke (npr. jpg, png, gif) |
 | Velikost slike | velikost datoteke (npr. 2MB) |
 | Album | poimenovana zbirka slik (npr. dogodek ali generacija) |
-| Komentar | kratko besedilo, ki ga uporabnik objavi pod sliko |
-| Moderiranje | pregled in odstranjevanje neprimernih slik ali komentarjev |
+| Osebni album | album, ki ga je ustvaril prijavljeni uporabnik; dokler ni objavljen, je viden samo njemu |
+| Objava albuma | dejanje, s katerim lastnik album naredi viden ostalim uporabnikom |
+| Feed | seznam objavljenih albumov ostalih uporabnikov |
+| Profil | stran uporabnika z njegovimi osebnimi podatki |
+| Osebni podatki | podatki o uporabniku v profilu (npr. ime, e-pošta, opis) |
 
 ---
 
 ## Diagram primerov uporabe
 
-Diagram prikazuje načrtovano različico aplikacije (10 primerov uporabe, 2 akterja). Administrator lahko izvaja tudi vse primere uporabe uporabnika.
+Diagram prikazuje načrtovano različico aplikacije (17 primerov uporabe, 2 akterja). Administrator je specializacija uporabnika (generalizacija akterjev), zato lahko izvaja tudi vse primere uporabe uporabnika.
 
 ![Diagram primerov uporabe](Slike/Use_case_diagram.png)
 
 | ID | Primer uporabe | Akter | Povezava | Stanje |
 |---|---|---|---|---|
-| PU1 | Pregled osebnih slik | uporabnik |  | implementirano |
-| PU2 | Iskanje osebnih slik | uporabnik | razširja PU1 | implementirano |
-| PU3 | Dodajanje slike | uporabnik | vključuje PU6 | implementirano (brez datoteke) |
-| PU4 | Urejanje slike | uporabnik | Razširja PU1 | implementirano |
-| PU5 | Nalaganje slikovne datoteke | uporabnik | vključena v PU3 | načrtovano |
-| PU6 | Razvrščanje slik | uporabnik | razširja PU1 | načrtovano |
-| PU7 | Ustvarjanje albuma | uporabnik | | načrtovano |
-| PU8 | Pregled osebnih albumov | uporabnik | | načrtovano |
-| PU9 | Iskanje osebnega albuma | uporabnik | Razširja PU9 | načrtovano |
-| PU10 | Objava albuma | uporabnik | Razširja PU9 | načrtovano |
-| PU11 | Gledanje albumov ostalih uporabnikov (feed) | uporabnik |  | načrtovano |
-| PU12 | Iskanje albuma | uporabnik |  | načrtovano |
-| PU13 | Ogled albuma | uporabnik | Razširja PU12, PU13 | načrtovano |
-| PU14 | Ogled profila | uporabnik | | načrtovano |
-| PU15 | Urejanje osebnih podatkov | uporabnik | Razširja PU15 | načrtovano |
-| PU16 | Urejanje uporabniških profilov | administrator || načrtovano |
-| PU17 | Urejanje albumov | administrator |  | načrtovano |
+| PU1 | Pregled osebnih slik | Uporabnik | – | implementirano (brez uporabniških računov) |
+| PU2 | Iskanje osebnih slik | Uporabnik | razširja PU1 | implementirano |
+| PU3 | Dodajanje slike | Uporabnik | vključuje PU5 | implementirano (brez datoteke) |
+| PU4 | Urejanje slike | Uporabnik | razširja PU1 | implementirano |
+| PU5 | Nalaganje slikovne datoteke | Uporabnik | vključen v PU3 | načrtovano |
+| PU6 | Razvrščanje slik | Uporabnik | razširja PU1 | načrtovano |
+| PU7 | Ustvarjanje albuma | Uporabnik | – | načrtovano |
+| PU8 | Pregled osebnih albumov | Uporabnik | – | načrtovano |
+| PU9 | Iskanje osebnega albuma | Uporabnik | razširja PU8 | načrtovano |
+| PU10 | Objava albuma | Uporabnik | razširja PU8 | načrtovano |
+| PU11 | Gledanje albumov ostalih uporabnikov (feed) | Uporabnik | – | načrtovano |
+| PU12 | Iskanje albuma | Uporabnik | – | načrtovano |
+| PU13 | Ogled albuma | Uporabnik | razširja PU11 in PU12 | načrtovano |
+| PU14 | Ogled profila | Uporabnik | – | načrtovano |
+| PU15 | Urejanje osebnih podatkov | Uporabnik | razširja PU14 | načrtovano |
+| PU16 | Urejanje uporabniških profilov | Administrator | – | načrtovano |
+| PU17 | Urejanje albumov | Administrator | – | načrtovano |
 
-
-Podrobni opisi še neimplementiranih primerov uporabe (PU6 do PU10) so v [docs/primeri-uporabe.md](docs/primeri-uporabe.md).
+Podrobni opisi vseh še neimplementiranih primerov uporabe (PU5 do PU17) so v [primeri-uporabe.md](primeri-uporabe.md).
 
 ---
 
@@ -181,7 +191,8 @@ Različice so povzete iz `package.json`.
 
 | Tehnologija | Različica |
 |---|---|
-| Node.js | LTS (npr. 22.x) |
+| Node.js | 22.18.0 |
+| npm | 10.9.3 |
 | React / React DOM | ^19.3.1 |
 | react-router | ^7.18.4 |
 | Material UI (`@mui/material`) | ^9.5.0 |
@@ -236,9 +247,12 @@ Alumini/
 │               ├── Routing/          # definicija poti
 │               ├── Slike/            # Slike, SlikeTable, DodajSliko, UrediSliko
 │               └── PageNotFound/     # stran 404
+├── Slike/
+│   └── Use_case_diagram.png          # diagram primerov uporabe
 ├── docker-compose.yml                # PostgreSQL vsebnik (geslo iz .env)
 ├── .env.example                      # primer .env za Docker (DB_PASSWORD)
 ├── .gitignore
+├── primeri-uporabe.md                # podrobni opisi primerov uporabe
 └── README.md
 ```
 
@@ -253,6 +267,7 @@ Alumini/
 | `Frontend/.../services` | komunikacija z backendom |
 | `Frontend/.../components/Slike` | zasloni in tabela za upravljanje slik |
 | `Frontend/.../components/Routing` | poti aplikacije |
+| `Slike/` | slike za dokumentacijo (diagrami) |
 
 ### REST API
 
@@ -280,7 +295,7 @@ Swagger UI: `http://localhost:8080/swagger-ui.html`
 | Orodje | Zahteva | Preverjanje |
 |---|---|---|
 | JDK | **25** (ne 26 ali 27; Lombok ju še ne podpira) | `java -version` |
-| Node.js + npm | LTS | `node -v`, `npm -v` |
+| Node.js + npm | Node.js **22.18.0**, npm **10.9.3** | `node -v`, `npm -v` |
 | Docker Desktop | zagnan (Engine running) | `docker version` |
 | Git | katera koli novejša | `git --version` |
 
