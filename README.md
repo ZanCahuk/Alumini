@@ -21,6 +21,10 @@ Spletna aplikacija za upravljanje zbirke slik (dodajanje, urejanje, brisanje, is
 7. [Navodila za nameščanje in zagon](#navodila-za-nameščanje-in-zagon)
 8. [Navodila za razvijalce](#navodila-za-razvijalce)
 9. [Standardi kodiranja](#standardi-kodiranja)
+ 
+##### Dokumentacija
+
+- [Uporabniške zgodbe](docs/user-stories.md)
 
 ---
 

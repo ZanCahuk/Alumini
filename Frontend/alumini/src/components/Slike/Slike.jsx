@@ -88,6 +88,9 @@ const Slike = () => {
     return (
         <>
             <h1>Slike</h1>
+            <Link to="/albumi" style={{ marginRight: 12, textDecoration: "none" }}>
+                <Button variant="outlined">Albumi</Button>
+            </Link>
             <Link to="/slike/dodaj">
                 <Button variant="contained">Dodaj Sliko</Button>
             </Link>
