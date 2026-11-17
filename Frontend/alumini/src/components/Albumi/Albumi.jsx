@@ -210,15 +210,24 @@ export default function Albumi() {
                         Nazaj na albume
                     </Button>
                     <Box className="detail-heading">
-                        <Box>
-                            <Typography variant="h4" className="album-title">{aktualniAlbum.name}</Typography>
-                            <Typography color="text.secondary">{aktualniAlbum.description || "Brez opisa"}</Typography>
-                        </Box>
-                        <Chip
-                            icon={objavljen ? <PublicIcon /> : <LockOutlinedIcon />}
-                            label={objavljen ? "Objavljen" : "Zaseben"}
-                            color={objavljen ? "success" : "default"}
-                        />
+                <Box>
+                    <Typography variant="h4" className="album-title">{aktualniAlbum.name}</Typography>
+                    <Typography color="text.secondary">{aktualniAlbum.description || "Brez opisa"}</Typography>
+                    </Box>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <Chip
+                                icon={objavljen ? <PublicIcon /> : <LockOutlinedIcon />}
+                                label={objavljen ? "Objavljen" : "Zaseben"}
+                                color={objavljen ? "success" : "default"}
+                            />
+                            <Button
+                                variant="contained"
+                                startIcon={<EditOutlinedIcon />}
+                                onClick={() => navigate(`/albumi/uredi/${aktualniAlbum.id}`)}
+                            >
+                                Uredi album
+                            </Button>
+                        </Stack>
                     </Box>
                     <Paper className="empty-album" elevation={0}>
                         <Avatar className="empty-album-icon"><PhotoOutlinedIcon /></Avatar>
