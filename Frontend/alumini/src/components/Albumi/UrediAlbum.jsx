@@ -52,6 +52,9 @@ export default function UrediAlbum() {
             api.get(`/albumi/${id}/slike`),
         ])
             .then(([odgovorAlbum, odgovorSlike, odgovorPostavitev]) => {
+                console.log("odgovorAlbum:"+odgovorAlbum)
+                console.log("odgovorSlike:"+odgovorSlike)
+                console.log("odgovorPostavitev:"+odgovorPostavitev)
                 if (preklicano) return;
                 const vseSlike = odgovorSlike.data || [];
                 const poId = new Map(vseSlike.map((slika) => [slika.id, slika]));

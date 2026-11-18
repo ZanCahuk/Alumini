@@ -10,7 +10,8 @@ import java.util.List;
 
 public interface AlbumSlikeDao extends JpaRepository<AlbumSlike, Integer> {
 
-    List<AlbumSlike> findByAlbumIdOrderByZIndex(Integer albumId);
+    @Query("select a from AlbumSlike a where a.album.id = :albumId order by a.zIndex")
+    List<AlbumSlike> findByAlbumIdOrderByZIndex(@Param("albumId") Integer albumId);
 
     @Modifying
     @Query("delete from AlbumSlike a where a.album.id = :albumId")
