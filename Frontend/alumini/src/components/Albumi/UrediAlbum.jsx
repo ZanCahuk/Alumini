@@ -3,15 +3,16 @@ import { useNavigate, useParams } from "react-router";
 import { Alert, Box, Button, IconButton, Paper, Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
-import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import api from "../../services/api";
+import { slikaUrl } from "../Slike/SlikeTable";
 
 // Logične dimenzije platna: shranjene koordinate so vedno v teh enotah,
 // na zaslonu se platno samo skalira, zato je postavitev povsod enaka.
 const PLATNO_W = 1200;
 const PLATNO_H = 800;
-const PRIVZETA_VELIKOST = 160;
+// Najdaljša stranica slike, ko jo dodamo na platno (razmerje stranic ostane enako).
+const PRIVZETA_VELIKOST = 240;
 const MIN_VELIKOST = 60;
 
 const omeji = (vrednost, min, max) => Math.min(Math.max(min, vrednost), max);
@@ -52,9 +53,6 @@ export default function UrediAlbum() {
             api.get(`/albumi/${id}/slike`),
         ])
             .then(([odgovorAlbum, odgovorSlike, odgovorPostavitev]) => {
-                console.log("odgovorAlbum:"+odgovorAlbum)
-                console.log("odgovorSlike:"+odgovorSlike)
-                console.log("odgovorPostavitev:"+odgovorPostavitev)
                 if (preklicano) return;
                 const vseSlike = odgovorSlike.data || [];
                 const poId = new Map(vseSlike.map((slika) => [slika.id, slika]));
@@ -92,7 +90,19 @@ export default function UrediAlbum() {
         );
     };
 
-    const dodajNaPlatno = (slika) => {
+    // Razmerje stranic (širina / višina) prebere brskalnik iz same slike, ker ga backend ne hrani.
+    const izmeriRazmerje = (slika) =>
+        new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img.naturalWidth / img.naturalHeight || 1);
+            img.onerror = () => resolve(1);
+            img.src = slikaUrl(slika.id);
+        });
+
+    const dodajNaPlatno = async (slika) => {
+        const razmerje = await izmeriRazmerje(slika);
+        const w = razmerje >= 1 ? PRIVZETA_VELIKOST : PRIVZETA_VELIKOST * razmerje;
+        const h = razmerje >= 1 ? PRIVZETA_VELIKOST / razmerje : PRIVZETA_VELIKOST;
         const kljuc = naslednjiKljuc.current++;
         const zamik = ((kljuc - 1) % 8) * 20;
         setNaPlatnu((trenutni) => [
@@ -102,8 +112,8 @@ export default function UrediAlbum() {
                 slika,
                 x: 20 + zamik,
                 y: 20 + zamik,
-                w: PRIVZETA_VELIKOST,
-                h: PRIVZETA_VELIKOST,
+                w,
+                h,
                 rotation: 0,
                 z: naslednjiZ.current++,
             },
@@ -198,7 +208,7 @@ export default function UrediAlbum() {
             <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/albumi")}>
                 Nazaj na albume
             </Button>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1, mb: 2 }}>
+            <Stack direction="row" sx={{ mt: 1, mb: 2, justifyContent: "space-between", alignItems: "center" }}>
                 <Typography variant="h4">
                     Urejanje albuma{album ? `: ${album.name}` : ""}
                 </Typography>
@@ -233,24 +243,40 @@ export default function UrediAlbum() {
                             <Box
                                 key={slika.id}
                                 onDoubleClick={() => dodajNaPlatno(slika)}
+                                title={slika.name}
                                 sx={{
+                                    position: "relative",
                                     aspectRatio: "1 / 1",
                                     bgcolor: "action.hover",
                                     border: "1px solid",
                                     borderColor: "divider",
                                     borderRadius: 1,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    p: 0.5,
+                                    overflow: "hidden",
                                     cursor: "pointer",
                                     userSelect: "none",
                                     "&:hover": { borderColor: "primary.main" },
                                 }}
                             >
-                                <PhotoOutlinedIcon color="action" />
-                                <Typography variant="caption" noWrap sx={{ maxWidth: "100%" }}>
+                                <img
+                                    src={slikaUrl(slika.id)}
+                                    alt={slika.name || "Slika"}
+                                    loading="lazy"
+                                    draggable={false}
+                                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                                />
+                                <Typography
+                                    variant="caption"
+                                    noWrap
+                                    sx={{
+                                        position: "absolute",
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        px: 0.5,
+                                        color: "common.white",
+                                        bgcolor: "rgba(0,0,0,0.5)",
+                                    }}
+                                >
                                     {slika.name}
                                 </Typography>
                             </Box>
@@ -309,10 +335,6 @@ export default function UrediAlbum() {
                                     borderColor: "primary.main",
                                     borderRadius: 1,
                                     boxShadow: 2,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    justifyContent: "center",
                                     cursor: "grab",
                                     touchAction: "none",
                                     userSelect: "none",
@@ -325,14 +347,29 @@ export default function UrediAlbum() {
                                     aria-label="Odstrani iz albuma"
                                     onPointerDown={(event) => event.stopPropagation()}
                                     onClick={() => odstraniSNaPlatna(el.key)}
-                                    sx={{ position: "absolute", top: 0, right: 0 }}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 2,
+                                        right: 2,
+                                        zIndex: 1,
+                                        bgcolor: "rgba(255,255,255,0.85)",
+                                        "&:hover": { bgcolor: "common.white" },
+                                    }}
                                 >
                                     <CloseIcon fontSize="small" />
                                 </IconButton>
-                                <PhotoOutlinedIcon color="action" />
-                                <Typography variant="caption" noWrap sx={{ maxWidth: "90%" }}>
-                                    {el.slika.name}
-                                </Typography>
+                                <img
+                                    src={slikaUrl(el.slika.id)}
+                                    alt={el.slika.name || "Slika"}
+                                    draggable={false}
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        display: "block",
+                                        pointerEvents: "none",
+                                    }}
+                                />
 
                                 <Box
                                     onPointerDown={(event) => zacniSpremembo(event, el)}
@@ -343,8 +380,10 @@ export default function UrediAlbum() {
                                         bottom: 0,
                                         width: 20,
                                         height: 20,
+                                        zIndex: 1,
                                         cursor: "nwse-resize",
-                                        background: "linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.45) 50%)",
+                                        background: "linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.9) 50%)",
+                                        filter: "drop-shadow(0 0 1px rgba(0,0,0,0.8))",
                                     }}
                                 />
                             </Box>

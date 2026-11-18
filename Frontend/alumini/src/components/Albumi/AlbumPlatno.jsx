@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Paper, Typography } from "@mui/material";
-import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import api from "../../services/api";
+import { slikaUrl } from "../Slike/SlikeTable";
 
 // Isti logični dimenziji kot v urejevalniku (UrediAlbum.js).
 const PLATNO_W = 1200;
@@ -104,22 +104,18 @@ export default function AlbumPlatno({ albumId }) {
                             zIndex: el.z,
                             transform: `rotate(${el.rotation}deg)`,
                             bgcolor: "background.paper",
-                            border: "1px solid",
-                            borderColor: "divider",
                             borderRadius: 1,
                             boxShadow: 2,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
                             overflow: "hidden",
                             userSelect: "none",
                         }}
                     >
-                        <PhotoOutlinedIcon color="action" />
-                        <Typography variant="caption" noWrap sx={{ maxWidth: "90%" }}>
-                            {el.slika.name}
-                        </Typography>
+                        <img
+                            src={slikaUrl(el.slika.id)}
+                            alt={el.slika.name || "Slika"}
+                            draggable={false}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                        />
                     </Box>
                 ))}
             </Box>

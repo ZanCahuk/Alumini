@@ -215,7 +215,7 @@ export default function Albumi() {
                     <Typography variant="h4" className="album-title">{aktualniAlbum.name}</Typography>
                     <Typography color="text.secondary">{aktualniAlbum.description || "Brez opisa"}</Typography>
                     </Box>
-                        <Stack direction="row" spacing={1} alignItems="center">
+                        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                             <Chip
                                 icon={objavljen ? <PublicIcon /> : <LockOutlinedIcon />}
                                 label={objavljen ? "Objavljen" : "Zaseben"}
@@ -352,8 +352,8 @@ export default function Albumi() {
                                         <Typography className="album-description" color="text.secondary" noWrap>
                                             {album.description || "Brez opisa"}
                                         </Typography>
-                                        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1.5 }}>
-                                            <Stack direction="row" spacing={0.7} alignItems="center">
+                                        <Stack direction="row" sx={{ mt: 1.5, justifyContent: "space-between", alignItems: "center" }}>
+                                            <Stack direction="row" spacing={0.7} sx={{ alignItems: "center" }}>
                                                 <PhotoOutlinedIcon fontSize="small" color="action" />
                                                 <Typography variant="body2" color="text.secondary">Album</Typography>
                                             </Stack>
@@ -367,7 +367,7 @@ export default function Albumi() {
                 )}
 
                 {steviloStrani > 1 && (
-                    <Stack alignItems="center" sx={{ mt: 4 }}>
+                    <Stack sx={{ mt: 4, alignItems: "center" }}>
                         <Pagination
                             count={steviloStrani}
                             page={stran + 1}
