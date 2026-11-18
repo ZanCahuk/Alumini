@@ -32,6 +32,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import api from "../../services/api";
 import "./Albumi.css";
+import AlbumPlatno from "./AlbumPlatno";
 
 const VELIKOST_STRANI = 6;
 const PRAZEN_OBRAZEC = { name: "", description: "" };
@@ -229,16 +230,7 @@ export default function Albumi() {
                             </Button>
                         </Stack>
                     </Box>
-                    <Paper className="empty-album" elevation={0}>
-                        <Avatar className="empty-album-icon"><PhotoOutlinedIcon /></Avatar>
-                        <Typography variant="h6">V tem albumu še ni slik</Typography>
-                        <Typography color="text.secondary">
-                            Povezovanje slik z albumi še ni implementirano.
-                        </Typography>
-                        <Button variant="outlined" onClick={() => navigate("/slike")} sx={{ mt: 2 }}>
-                            Pojdi na slike
-                        </Button>
-                    </Paper>
+                    <AlbumPlatno albumId={aktualniAlbum.id} />
                 </Box>
             </Box>
         );
