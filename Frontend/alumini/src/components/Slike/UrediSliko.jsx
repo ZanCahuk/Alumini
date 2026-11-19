@@ -1,41 +1,106 @@
-import { Button, TextField } from "@mui/material";
+import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import api from "../../services/api";
+import { slikaUrl } from "./SlikeTable";
 
 const UrediSliko = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [name, setName] = useState("");
-    const [type, setType] = useState("");
-    const [size, setSize] = useState("");
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [type, setType] = useState("");
+  const [size, setSize] = useState("");
+  const [napaka, setNapaka] = useState("");
 
-    useEffect(() => {
-        api.get(`/slike/${id}`)
-            .then((res) => {
-                setName(res.data.name ?? "");
-                setType(res.data.type ?? "");
-                setSize(res.data.size ?? "");
-            })
-            .catch((err) => console.error(err));
-    }, [id]);
+  useEffect(() => {
+    api
+      .get(`/slike/${id}`)
+      .then((res) => {
+        setName(res.data.name ?? "");
+        setType(res.data.type ?? "");
+        setSize(res.data.size ?? "");
+      })
+      .catch((err) => {
+        console.error(err);
+        setNapaka("Slike ni mogoče naložiti.");
+      });
+  }, [id]);
 
-    const shrani = () => {
-        api.put(`/slike/${id}`, { name, type, size })
-            .then(() => navigate("/slike"))
-            .catch((err) => console.error(err));
-    };
+  const shrani = () => {
+    if (!name.trim()) {
+      setNapaka("Ime ne sme biti prazno.");
+      return;
+    }
+    api
+      .put(`/slike/${id}`, { name: name.trim() })
+      .then(() => navigate("/slike"))
+      .catch((err) => {
+        console.error(err);
+        setNapaka("Shranjevanje ni uspelo.");
+      });
+  };
 
-    return (
-        <div>
-            <Button variant="contained" onClick={() => navigate("/slike")}>Nazaj na slike</Button>
-            <p>Urejanje slike</p>
-            <TextField label="Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} /><br />
-            <TextField label="Type" variant="outlined" value={type} onChange={(e) => setType(e.target.value)} /><br />
-            <TextField label="Size" variant="outlined" value={size} onChange={(e) => setSize(e.target.value)} /><br />
-            <Button variant="contained" onClick={shrani}>Shrani</Button>
-        </div>
-    );
+  return (
+    <Box sx={{ p: 3, maxWidth: 600 }}>
+      <Button variant="outlined" onClick={() => navigate("/slike")}>
+        Nazaj na slike
+      </Button>
+
+      <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
+        Urejanje slike
+      </Typography>
+
+      {napaka && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {napaka}
+        </Alert>
+      )}
+
+      <img
+        src={slikaUrl(id)}
+        alt={name || "Slika"}
+        style={{
+          maxWidth: "100%",
+          maxHeight: 350,
+          borderRadius: 8,
+          display: "block",
+          marginBottom: 16,
+        }}
+      />
+
+      <TextField
+        label="Ime"
+        variant="outlined"
+        fullWidth
+        value={name}
+        onChange={(e) => {
+          setName(e.target.value);
+          setNapaka("");
+        }}
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        label="Tip"
+        variant="outlined"
+        fullWidth
+        value={type}
+        disabled
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        label="Velikost"
+        variant="outlined"
+        fullWidth
+        value={size}
+        disabled
+        sx={{ mb: 2 }}
+      />
+
+      <Button variant="contained" onClick={shrani}>
+        Shrani
+      </Button>
+    </Box>
+  );
 };
 
 export default UrediSliko;

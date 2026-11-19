@@ -21,6 +21,10 @@ Spletna aplikacija za upravljanje zbirke slik (dodajanje, urejanje, brisanje, is
 7. [Navodila za nameščanje in zagon](#navodila-za-nameščanje-in-zagon)
 8. [Navodila za razvijalce](#navodila-za-razvijalce)
 9. [Standardi kodiranja](#standardi-kodiranja)
+ 
+##### Dokumentacija
+
+- [Uporabniške zgodbe](docs/user-stories.md)
 
 ---
 
@@ -164,8 +168,6 @@ Diagram prikazuje načrtovano različico aplikacije (17 primerov uporabe, 2 akte
 | PU15 | Urejanje osebnih podatkov | Uporabnik | razširja PU14 | načrtovano |
 | PU16 | Urejanje uporabniških profilov | Administrator | – | načrtovano |
 | PU17 | Urejanje albumov | Administrator | – | načrtovano |
-
-
 
 Podrobni opisi vseh še neimplementiranih primerov uporabe (PU5 do PU17) so v [primeri-uporabe.md](primeri-uporabe.md).
 
