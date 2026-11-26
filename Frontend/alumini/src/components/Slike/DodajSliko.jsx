@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import api from "../../services/api";
 
-const MAX_VELIKOST = 10 * 1024 * 1024; // 10 MB, enako kot na backendu
-
+const MAX_VELIKOST = 10 * 1024 * 1024; 
 const DodajSliko = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();

@@ -81,7 +81,7 @@ Kot registriran uporabnik želim ustvarjati albume in vanje dodajati ter urejati
 
 ---
 
-## GitHub naloge (Sub-issues)
+#### (Sub-issues)
 
 ### TASK-01 – Ustvarjanje albumov
 
@@ -114,3 +114,68 @@ Kot registriran uporabnik želim ustvarjati albume in vanje dodajati ter urejati
 - Shranjevanje položaja in velikosti slik.
 - Obnovitev postavitve ob ponovnem odprtju albuma.
 
+
+# US-02
+
+
+## Uporabniška zgodba
+
+Kot uporabnik želim na domači strani videti svoje naložene slike in z njimi upravljati (naložiti novo, urediti ime, izbrisati), da imam vse svoje slike na enem mestu in jih lahko uporabim v albumih.
+
+## Sprejemni kriteriji
+
+### AC-01: Prikaz slik
+
+- **Given:** V sistemu je naloženih 8 slik.
+- **When:** Uporabnik odpre domačo stran.
+- **Then:** Sistem prikaže 6 slik v obliki kartic z miniaturo, imenom, velikostjo in tipom, pod seznamom pa strani 1 in 2 za pregledovanje.
+
+### AC-02: Iskanje slik
+
+- **Given:** Uporabnik je na domači strani in v sistemu so slike z različnimi imeni.
+- **When:** Uporabnik v iskalno polje vpiše del imena ali tipa slike.
+- **Then:** Sistem prikaže samo slike, katerih ime ali tip vsebuje vpisani niz, neodvisno od velikosti črk.
+
+### AC-03: Ni zadetkov
+
+- **Given:** Uporabnik je na domači strani.
+- **When:** Uporabnik vpiše niz, ki ga ne vsebuje nobena slika, ali v sistemu ni nobene slike.
+- **Then:** Sistem prikaže sporočilo »Ni najdenih slik« namesto seznama.
+
+### AC-04: Strežnik ni dosegljiv
+
+- **Given:** Strežnik ni dosegljiv.
+- **When:** Uporabnik odpre domačo stran.
+- **Then:** Sistem prikaže sporočilo »Slik ni bilo mogoče naložiti« in ne prikaže praznega seznama brez pojasnila.
+
+## Podrobnosti implementacije
+
+### Prikaz slik
+
+- Domača stran (`/` in `/slike`) prikaže slike v mreži kartic v enakem slogu kot seznam albumov (isti CSS razredi iz `Albumi.css`).
+- Naslovnica kartice je slika, ki jo vrne `GET /slike/prejmi/{id}`.
+- Klik na kartico odpre sliko v povečavi, meni s tremi pikami ponuja Odpri, Uredi in Izbriši.
+
+### Iskanje in paginacija
+
+- `GET /slike/iskanje?q=&page=&size=` vrne stran zadetkov, velikost strani je 6.
+- Iskanje poteka po polju `name` ali `type` brez upoštevanja velikosti črk (`SlikeDao.findByNameContainingIgnoreCaseOrTypeContainingIgnoreCase`).
+
+### Podatkovni model
+
+- Entiteta `Slike`: `id`, `name`, `type`, `size`, `datumNalaganja`, `podatkiSlike`.
+- Polje `podatkiSlike` je `byte[]` (v PostgreSQL `bytea`) z `@JsonIgnore`, zato se ne vrača v seznamih.
+- Podatki se hranijo v PostgreSQL v Dockerju.
+
+## Naloge
+
+- TASK-01: Nalaganje slike
+- TASK-02: Urejanje slike
+- TASK-03: Brisanje slike
+
+
+| Polje | Vrednost |
+|---|---|
+| ID | US-02 |
+| Odgovorni član | Žiga |
+| Vloga | Uporabnik |
