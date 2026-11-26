@@ -1,6 +1,6 @@
 # Alumini
 
-Spletna aplikacija za upravljanje zbirke slik (dodajanje, urejanje, brisanje, iskanje in paginacija zapisov).
+Spletna aplikacija za upravljanje zbirke slik in albumov (nalaganje slik, urejanje, brisanje, iskanje, paginacija, albumi s poljubno postavitvijo slik).
 
 ## Člani skupine
 
@@ -16,11 +16,12 @@ Spletna aplikacija za upravljanje zbirke slik (dodajanje, urejanje, brisanje, is
 2. [Vizija projekta](#vizija-projekta)
 3. [Besednjak](#besednjak)
 4. [Diagram primerov uporabe](#diagram-primerov-uporabe)
-5. [Uporabljene tehnologije](#uporabljene-tehnologije)
-6. [Struktura projekta](#struktura-projekta)
-7. [Navodila za nameščanje in zagon](#navodila-za-nameščanje-in-zagon)
-8. [Navodila za razvijalce](#navodila-za-razvijalce)
-9. [Standardi kodiranja](#standardi-kodiranja)
+5. [Razredni diagram](#razredni-diagram)
+6. [Uporabljene tehnologije](#uporabljene-tehnologije)
+7. [Struktura projekta](#struktura-projekta)
+8. [Navodila za nameščanje in zagon](#navodila-za-nameščanje-in-zagon)
+9. [Navodila za razvijalce](#navodila-za-razvijalce)
+10. [Standardi kodiranja](#standardi-kodiranja)
  
 ##### Dokumentacija
 
@@ -34,20 +35,27 @@ Alumini je celovita (full-stack) aplikacija, sestavljena iz React odjemalca (fro
 
 **Cilji projekta:**
 
-- upravljanje zapisov o slikah (ime, tip, velikost),
-- polni CRUD (ustvarjanje, branje, urejanje, brisanje),
-- iskanje po imenu ali tipu in strežniška paginacija (5 zapisov na stran),
+- upravljanje slik (nalaganje datotek, ime, tip, velikost, čas nalaganja),
+- upravljanje albumov in njihova objava,
+- prosta postavitev slik v albumu (premikanje in spreminjanje velikosti na platnu),
+- polni CRUD (ustvarjanje, branje, urejanje, brisanje) za slike in albume,
+- iskanje po imenu, tipu ali opisu in strežniška paginacija (6 zapisov na stran v vmesniku),
 - jasna ločitev med odjemalcem, REST API-jem in bazo.
 
 **Funkcionalnosti (trenutna različica):**
 
 | Funkcionalnost | Opis |
 |---|---|
-| Pregled slik | Tabela vseh zapisov z akcijami Uredi in Izbriši |
-| Dodajanje | Obrazec na poti `/slike/dodaj` |
-| Urejanje | Obrazec na poti `/slike/uredi/:id` |
-| Brisanje | Potrditveno okno in osvežitev seznama |
-| Iskanje | Iskanje po imenu ali tipu (brez razlikovanja velikih in malih črk) |
+| Pregled slik | Mreža kartic s predogledom slike, tipom in velikostjo; meni z akcijami Odpri, Uredi in Izbriši |
+| Nalaganje slik | Povleci in spusti ali izbira datoteke na poti `/slike/dodaj` (jpg, png, do 10 MB) |
+| Urejanje slike | Sprememba imena na poti `/slike/uredi/:id` (tip in velikost sta samo za branje) |
+| Brisanje slike | Potrditveno okno in osvežitev seznama |
+| Iskanje slik | Iskanje po imenu ali tipu (brez razlikovanja velikih in malih črk) |
+| Pregled albumov | Mreža kartic z iskanjem, filtri (Vsi, Objavljeni, Zasebni) in paginacijo |
+| Upravljanje albumov | Ustvarjanje, urejanje imena in opisa, brisanje |
+| Objava albuma | Preklop med stanjema Zaseben in Objavljen (`PRIVATE` / `PUBLIC`) |
+| Urejevalnik postavitve | Pot `/albumi/uredi/:id`: dvojni klik doda sliko na platno, nato premik, spreminjanje velikosti, odstranitev in shranjevanje postavitve |
+| Ogled albuma | Postavitev slik na platnu, skalirana na širino zaslona (samo za branje) |
 | Paginacija | Strani se izračunajo v bazi (`LIMIT` / `OFFSET`) |
 
 ---
@@ -68,7 +76,7 @@ Alumini je spletna galerija slik za alumni skupnost (npr. diplomante fakultete).
 
 | Skupina | Kaj dobi |
 |---|---|
-| Uporabniki (alumni) | upravljanje osebnih slik (pregled, iskanje, razvrščanje, dodajanje z nalaganjem datoteke, urejanje), ustvarjanje, pregled, iskanje in objava osebnih albumov, feed in iskanje albumov ostalih uporabnikov, ogled profila in urejanje osebnih podatkov |
+| Uporabniki (alumni) | upravljanje osebnih slik (pregled, iskanje, razvrščanje, dodajanje z nalaganjem datoteke, urejanje), ustvarjanje, pregled, iskanje in objava osebnih albumov z lastno postavitvijo slik, feed in iskanje albumov ostalih uporabnikov, ogled profila in urejanje osebnih podatkov |
 | Administratorji | vse, kar lahko uporabnik, ter urejanje albumov in uporabniških profilov vseh uporabnikov |
 
 ### Ključne funkcionalnosti
@@ -79,13 +87,17 @@ Stolpec PU se sklicuje na tabelo pod [diagramom primerov uporabe](#diagram-prime
 |---|---|---|---|
 | Pregled slik | seznam slik po straneh | PU1 | implementirano (brez uporabniških računov) |
 | Iskanje slik | iskanje po imenu ali tipu | PU2 | implementirano |
-| Dodajanje slike | vnos novega zapisa o sliki | PU3 | implementirano (brez datoteke) |
-| Urejanje slike | sprememba podatkov o sliki | PU4 | implementirano |
+| Dodajanje slike | nalaganje slikovne datoteke skupaj z zapisom | PU3 | implementirano (brez uporabniških računov) |
+| Nalaganje slikovnih datotek | shranjevanje datoteke (jpg, png) v bazo | PU5 | implementirano |
+| Urejanje slike | sprememba imena slike | PU4 | implementirano (spremeni se samo ime) |
 | Brisanje slike | odstranitev zapisa s potrditvijo | – | implementirano (manjka v diagramu) |
-| Nalaganje slikovnih datotek | shranjevanje datoteke skupaj z zapisom | PU5 | načrtovano |
 | Razvrščanje slik | razvrščanje po imenu, tipu, velikosti ali času | PU6 | načrtovano |
-| Osebni albumi | ustvarjanje, pregled in iskanje lastnih albumov | PU7–PU9 | načrtovano |
-| Objava albuma | album postane viden ostalim uporabnikom | PU10 | načrtovano |
+| Ustvarjanje albuma | nov album z imenom in opisom | PU7 | implementirano (brez uporabniških računov) |
+| Pregled osebnih albumov | seznam albumov po straneh | PU8 | implementirano (brez uporabniških računov) |
+| Iskanje osebnega albuma | iskanje po imenu ali opisu | PU9 | implementirano |
+| Objava albuma | preklop stanja Zaseben / Objavljen | PU10 | delno (stanje se shrani, vpliva na vidnost šele s feedom in računi) |
+| Postavitev slik v albumu | premik, sprememba velikosti in shranjevanje postavitve na platnu | – | implementirano (manjka v diagramu; rotacija načrtovana) |
+| Brisanje in urejanje albuma | sprememba podatkov in odstranitev albuma | – | implementirano (manjka v diagramu) |
 | Feed in iskanje albumov | pregled, iskanje in ogled objavljenih albumov ostalih uporabnikov | PU11–PU13 | načrtovano |
 | Uporabniški profil | ogled profila in urejanje osebnih podatkov | PU14, PU15 | načrtovano |
 | Administracija | urejanje uporabniških profilov in albumov | PU16, PU17 | načrtovano |
@@ -98,7 +110,7 @@ Podroben opis vseh načrtovanih primerov uporabe je v [primeri-uporabe.md](prime
 
 - upravljanje osebnih slik in njihovih metapodatkov (dodajanje z nalaganjem datoteke, urejanje, brisanje),
 - pregled z iskanjem, razvrščanjem in paginacijo,
-- osebni albumi in njihova objava,
+- osebni albumi, postavitev slik v albumu in objava albumov,
 - feed in iskanje objavljenih albumov ostalih uporabnikov,
 - uporabniški profili,
 - administracija albumov in uporabniških profilov.
@@ -112,10 +124,14 @@ Podroben opis vseh načrtovanih primerov uporabe je v [primeri-uporabe.md](prime
 
 **Omejitve trenutne različice:**
 
-- hranijo se samo metapodatki (ime, tip, velikost), ne pa slikovne datoteke,
-- aplikacija nima uporabniških računov in prijave, zato so vse slike skupne in lahko vsak spreminja in briše zapise,
-- albumi, profili in administracija še niso implementirani,
-- iskanje deluje samo po imenu in tipu,
+- podprti formati slik so samo jpg in png; vmesnik dovoli datoteke do 10 MB, backend pa jih sprejme do 30 MB (`spring.servlet.multipart.max-file-size`),
+- slikovne datoteke se hranijo neposredno v bazi (stolpec s podatki slike), ne v datotečnem sistemu,
+- aplikacija nima uporabniških računov in prijave, zato so vse slike in albumi skupni in lahko vsak spreminja in briše zapise,
+- objava albuma samo spremeni stanje; feed in iskanje albumov drugih uporabnikov še nista implementirana,
+- profili in administracija še niso implementirani,
+- slik ni mogoče razvrščati (iskanje deluje samo po imenu in tipu),
+- v urejevalniku albuma ni vrtenja slik (podatek o rotaciji se hrani, uporabniški vmesnik zanj še ne obstaja),
+- filtri Objavljeni / Zasebni pri albumih in filter tipa pri slikah delujejo samo na trenutni strani rezultatov,
 - aplikacija teče lokalno (baza v Dockerju), brez produkcijske namestitve,
 - uporabniški vmesnik je samo v slovenščini.
 
@@ -131,12 +147,15 @@ Podroben opis vseh načrtovanih primerov uporabe je v [primeri-uporabe.md](prime
 | Administrator | uporabnik z dodatno pravico urejanja albumov in uporabniških profilov vseh uporabnikov |
 | Slika | osrednji zapis v sistemu: slikovna datoteka skupaj z metapodatki |
 | Osebne slike | slike, ki jih je dodal prijavljeni uporabnik |
-| Metapodatki slike | podatki o sliki: ime, tip in velikost (načrtovano tudi opis in čas dodajanja) |
-| Tip slike | format slikovne datoteke (npr. jpg, png, gif) |
-| Velikost slike | velikost datoteke (npr. 2MB) |
-| Album | poimenovana zbirka slik (npr. dogodek ali generacija) |
+| Metapodatki slike | podatki o sliki: ime, tip, velikost in čas nalaganja (načrtovano tudi opis) |
+| Tip slike | format slikovne datoteke (jpg ali png) |
+| Velikost slike | velikost datoteke v MB (npr. 2.00 MB) |
+| Album | poimenovana zbirka slik (npr. dogodek ali generacija) z imenom, opisom in stanjem |
 | Osebni album | album, ki ga je ustvaril prijavljeni uporabnik; dokler ni objavljen, je viden samo njemu |
-| Objava albuma | dejanje, s katerim lastnik album naredi viden ostalim uporabnikom |
+| Objava albuma | dejanje, s katerim lastnik album naredi viden ostalim uporabnikom (stanje `PUBLIC`) |
+| Zaseben album | album v stanju `PRIVATE` |
+| Platno | površina logične velikosti 1200 × 800 enot, na katero se v albumu postavijo slike; na zaslonu se samo skalira |
+| Postavitev | položaj slike na platnu: x, y, širina, višina, rotacija in z-indeks |
 | Feed | seznam objavljenih albumov ostalih uporabnikov |
 | Profil | stran uporabnika z njegovimi osebnimi podatki |
 | Osebni podatki | podatki o uporabniku v profilu (npr. ime, e-pošta, opis) |
@@ -145,7 +164,7 @@ Podroben opis vseh načrtovanih primerov uporabe je v [primeri-uporabe.md](prime
 
 ## Diagram primerov uporabe
 
-Diagram prikazuje načrtovano različico aplikacije (17 primerov uporabe, 2 akterja). Administrator je specializacija uporabnika (generalizacija akterjev), zato lahko izvaja tudi vse primere uporabe uporabnika.
+Diagram prikazuje načrtovano različico aplikacije (17 primerov uporabe, 2 akterja). Razredni diagram je v poglavju [Razredni diagram](#razredni-diagram). Administrator je specializacija uporabnika (generalizacija akterjev), zato lahko izvaja tudi vse primere uporabe uporabnika.
 
 ![Diagram primerov uporabe](Slike/Use_case_diagram.png)
 
@@ -153,29 +172,31 @@ Diagram prikazuje načrtovano različico aplikacije (17 primerov uporabe, 2 akte
 |---|---|---|---|---|
 | PU1 | Pregled osebnih slik | Uporabnik | – | implementirano (brez uporabniških računov) |
 | PU2 | Iskanje osebnih slik | Uporabnik | razširja PU1 | implementirano |
-| PU3 | Dodajanje slike | Uporabnik | vključuje PU5 | implementirano (brez datoteke) |
-| PU4 | Urejanje slike | Uporabnik | razširja PU1 | implementirano |
-| PU5 | Nalaganje slikovne datoteke | Uporabnik | vključen v PU3 | načrtovano |
+| PU3 | Dodajanje slike | Uporabnik | vključuje PU5 | implementirano (brez uporabniških računov) |
+| PU4 | Urejanje slike | Uporabnik | razširja PU1 | implementirano (samo ime) |
+| PU5 | Nalaganje slikovne datoteke | Uporabnik | vključen v PU3 | implementirano |
 | PU6 | Razvrščanje slik | Uporabnik | razširja PU1 | načrtovano |
-| PU7 | Ustvarjanje albuma | Uporabnik | – | načrtovano |
-| PU8 | Pregled osebnih albumov | Uporabnik | – | načrtovano |
-| PU9 | Iskanje osebnega albuma | Uporabnik | razširja PU8 | načrtovano |
-| PU10 | Objava albuma | Uporabnik | razširja PU8 | načrtovano |
+| PU7 | Ustvarjanje albuma | Uporabnik | – | implementirano (brez uporabniških računov) |
+| PU8 | Pregled osebnih albumov | Uporabnik | – | implementirano (brez uporabniških računov) |
+| PU9 | Iskanje osebnega albuma | Uporabnik | razširja PU8 | implementirano |
+| PU10 | Objava albuma | Uporabnik | razširja PU8 | delno (samo preklop stanja) |
 | PU11 | Gledanje albumov ostalih uporabnikov (feed) | Uporabnik | – | načrtovano |
 | PU12 | Iskanje albuma | Uporabnik | – | načrtovano |
-| PU13 | Ogled albuma | Uporabnik | razširja PU11 in PU12 | načrtovano |
+| PU13 | Ogled albuma | Uporabnik | razširja PU11 in PU12 | delno (ogled lastnega albuma s postavitvijo) |
 | PU14 | Ogled profila | Uporabnik | – | načrtovano |
 | PU15 | Urejanje osebnih podatkov | Uporabnik | razširja PU14 | načrtovano |
 | PU16 | Urejanje uporabniških profilov | Administrator | – | načrtovano |
 | PU17 | Urejanje albumov | Administrator | – | načrtovano |
 
-Podrobni opisi vseh še neimplementiranih primerov uporabe (PU5 do PU17) so v [primeri-uporabe.md](primeri-uporabe.md).
+V diagramu manjkajo še implementirani funkcionalnosti: brisanje slike, urejanje in brisanje albuma ter urejevalnik postavitve slik v albumu.
+
+Podrobni opisi še neimplementiranih primerov uporabe (PU6, PU11 do PU17) so v [primeri-uporabe.md](primeri-uporabe.md).
 
 ---
 
 ## Razredni diagram
 
-Razredni diagram vključuje vse funkcionalnosti iz diagrama primerov uporabe (PU1–PU17), tudi tiste, ki še niso implementirane (uporabnik, administrator, feed, razporeditev slik v albumu). Urejljiva različica je v [`docs/razredni-diagram/Alumini.drawio`](docs/razredni-diagram/Alumini.drawio), spodnji diagram pa je zapisan v Mermaidu (GitHub ga izriše sam).
+Razredni diagram vključuje vse funkcionalnosti iz diagrama primerov uporabe (PU1–PU17), tudi tiste, ki še niso implementirane (uporabnik, administrator, feed). Razporeditev slik v albumu je v kodi že implementirana kot entiteta `AlbumSlike` (v diagramu `AlbumSlika`, z atributi `width` / `height` namesto `sirina` / `visina` in z dodatnim `rotation`). Urejljiva različica je v [`docs/razredni-diagram/Alumini.drawio`](docs/razredni-diagram/Alumini.drawio), spodnji diagram pa je zapisan v Mermaidu (GitHub ga izriše sam).
 
 ```mermaid
 classDiagram
@@ -335,7 +356,7 @@ V `.drawio` datoteki je `AlbumSlika` pravi asociacijski razred (črtkana črta d
 | `Albumi` | Zbirka slik z vidnostjo `PUBLIC` ali `PRIVATE` | `objavi` – nastavi status na `PUBLIC`; `dodajSliko`, `odstraniSliko`; `premakniSliko`, `spremeniVelikost` – spreminjata položaj in velikost slike v albumu |
 | `AlbumSlika` | Asociacijski razred, ki pove, kje in kako velika je slika v albumu | `premakni`, `spremeniVelikost` |
 
-**Opomba:** atributi in metode, ki jih v kodi še ni (`Uporabnik`, `Administrator`, `AlbumSlika`, status v feedu, povezava lastnika), so del načrta in se bodo dodajali sproti.
+**Opomba:** atributi in metode, ki jih v kodi še ni (`Uporabnik`, `Administrator`, status v feedu, povezava lastnika), so del načrta in se bodo dodajali sproti. Razporeditev slik je v kodi implementirana prek `AlbumSlikeController` (`GET` in `PUT /albumi/{id}/slike`), `AlbumSlikeDao` in entitete `AlbumSlike`; imena in atributi se od diagrama nekoliko razlikujejo (glej zgoraj).
 
 ## Uporabljene tehnologije
 
@@ -345,7 +366,7 @@ V `.drawio` datoteki je `AlbumSlika` pravi asociacijski razred (črtkana črta d
 |---|---|
 | Java (JDK) | 25 |
 | Spring Boot | 4.1.1 |
-| Spring Web MVC | prek Spring Boot 4.1.1 |
+| Spring Web MVC (vključno z multipart nalaganjem datotek) | prek Spring Boot 4.1.1 |
 | Spring Data JPA (Hibernate 7.4.5) | prek Spring Boot 4.1.1 |
 | Spring Validation | prek Spring Boot 4.1.1 |
 | springdoc-openapi (Swagger UI) | 3.1.0 |
@@ -396,27 +417,32 @@ Alumini/
 │       └── main/
 │           ├── java/com/example/alumini/
 │           │   ├── AluminiApplication.java   # vstopna točka
-│           │   ├── rest/                     # REST kontrolerji (SlikeController, HelloController)
-│           │   ├── dao/                      # repozitoriji (SlikeDao)
-│           │   └── vao/                      # entitete (Slike)
+│           │   ├── CORS_config/              # CorsConfig
+│           │   ├── rest/                     # SlikeController, AlbumiController, AlbumSlikeController, PostavitevDto, HelloController
+│           │   ├── services/                 # poslovna logika (SlikeService: preverjanje in shranjevanje slik)
+│           │   ├── dao/                      # SlikeDao, AlbumiDao, AlbumSlikeDao
+│           │   └── vao/                      # entitete Slike, Albumi, AlbumSlike
 │           └── resources/
 │               ├── application.properties                    # splošne nastavitve (brez gesla)
 │               └── application-local.properties.example      # primer lokalnih podatkov za bazo
-├── Frontend/
-│   └── alumini/                      # React aplikacija
-│       ├── package.json              # odvisnosti in skripte
-│       ├── .env.example              # primer okoljskih spremenljivk
-│       ├── public/
-│       └── src/
-│           ├── App.js                # BrowserRouter + usmerjanje
-│           ├── services/
-│           │   └── api.js            # axios instanca (baseURL)
-│           └── components/
-│               ├── Routing/          # definicija poti
-│               ├── Slike/            # Slike, SlikeTable, DodajSliko, UrediSliko
-│               └── PageNotFound/     # stran 404
+├── Frontend/                         # React aplikacija
+│   ├── package.json                  # odvisnosti in skripte
+│   ├── .env.example                  # primer okoljskih spremenljivk
+│   ├── public/
+│   └── src/
+│       ├── App.js                    # BrowserRouter + usmerjanje
+│       ├── services/
+│       │   └── api.jsx               # axios instanca (baseURL)
+│       └── components/
+│           ├── Routing/              # definicija poti
+│           ├── Slike/                # Slike, DodajSliko, UrediSliko (SlikeTable vsebuje samo pomožni slikaUrl)
+│           ├── Albumi/               # Albumi, AlbumPlatno, UrediAlbum, Albumi.css
+│           └── PageNotFound/         # stran 404
 ├── Slike/
-│   └── Use_case_diagram.png          # diagram primerov uporabe
+│   ├── Use_case_diagram.png          # diagram primerov uporabe
+│   └── Razredni_Diagram.png          # razredni diagram
+├── docs/
+│   └── user-stories.md               # uporabniške zgodbe
 ├── docker-compose.yml                # PostgreSQL vsebnik (geslo iz .env)
 ├── .env.example                      # primer .env za Docker (DB_PASSWORD)
 ├── .gitignore
@@ -428,29 +454,68 @@ Alumini/
 
 | Mapa | Vsebina |
 |---|---|
-| `Backend/.../rest` | REST kontrolerji, ki sprejemajo HTTP zahteve |
+| `Backend/.../rest` | REST kontrolerji, ki sprejemajo HTTP zahteve (in `PostavitevDto` za postavitev slik) |
+| `Backend/.../CORS_config` | nastavitve CORS za dostop z `localhost:3000` |
+| `Backend/.../services` | poslovna logika (preverjanje končnice, pretvorba velikosti, shranjevanje slike) |
 | `Backend/.../dao` | Spring Data repozitoriji za dostop do baze |
 | `Backend/.../vao` | JPA entitete (preslikava tabel) |
 | `Backend/.../resources` | konfiguracija aplikacije |
-| `Frontend/.../services` | komunikacija z backendom |
-| `Frontend/.../components/Slike` | zasloni in tabela za upravljanje slik |
-| `Frontend/.../components/Routing` | poti aplikacije |
+| `Frontend/src/services` | komunikacija z backendom |
+| `Frontend/src/components/Slike` | zasloni za pregled, nalaganje in urejanje slik |
+| `Frontend/src/components/Albumi` | zasloni za albume, ogled postavitve (`AlbumPlatno`) in urejevalnik (`UrediAlbum`) |
+| `Frontend/src/components/Routing` | poti aplikacije |
 | `Slike/` | slike za dokumentacijo (diagrami) |
+
+### Podatkovni model
+
+| Entiteta | Polja |
+|---|---|
+| Slike | `id`, `name`, `type` (jpg/png), `size` (npr. `2.00 MB`), podatki slike (bajti datoteke), `datumNalaganja` |
+| Albumi | `id`, `name`, `description`, `status` (`PRIVATE` / `PUBLIC`) |
+| AlbumSlike (postavitev slike v albumu) | `id`, album, slika, `x`, `y`, `width`, `height`, `rotation`, `zIndex`; ob brisanju albuma ali slike se vrstica izbriše (`ON DELETE CASCADE`) |
+
+Koordinate in velikosti so v logičnih enotah platna (1200 × 800), zato je postavitev na vseh zaslonih enaka.
+
+### Poti v aplikaciji (frontend)
+
+| Pot | Zaslon |
+|---|---|
+| `/` in `/slike` | pregled slik |
+| `/slike/dodaj` | nalaganje slike |
+| `/slike/uredi/:id` | urejanje slike |
+| `/albumi` | pregled albumov in ogled posameznega albuma |
+| `/albumi/uredi/:id` | urejevalnik postavitve albuma |
+| `*` | stran 404 |
 
 ### REST API
 
 Osnovni naslov: `http://localhost:8080`
 
+**Slike**
+
 | Metoda | Pot | Opis |
 |---|---|---|
 | GET | `/slike` | vsi zapisi |
-| GET | `/slike/iskanje?q=&page=&size=` | iskanje + paginacija |
-| GET | `/slike/{id}` | en zapis |
-| POST | `/slike` | nov zapis |
-| POST | `/slike/bulk` | več zapisov naenkrat |
-| PUT | `/slike/{id}` | urejanje zapisa |
+| GET | `/slike/iskanje?q=&page=&size=` | iskanje po imenu ali tipu + paginacija |
+| GET | `/slike/{id}` | metapodatki ene slike |
+| GET | `/slike/prejmi/{id}` | slikovna datoteka (z ustreznim `Content-Type`) |
+| POST | `/slike/upload` | nalaganje slike (`multipart/form-data`: `file`, neobvezno `ime`) |
+| PUT | `/slike/{id}` | sprememba imena slike (telo: `{"name": "..."}`) |
 | DELETE | `/slike/{id}` | brisanje zapisa |
-| DELETE | `/slike` | brisanje vseh zapisov |
+
+**Albumi**
+
+| Metoda | Pot | Opis |
+|---|---|---|
+| GET | `/albumi` | vsi albumi |
+| GET | `/albumi/iskanje?q=&page=&size=` | iskanje po imenu ali opisu + paginacija |
+| GET | `/albumi/{id}` | en album |
+| POST | `/albumi` | nov album |
+| PUT | `/albumi/{id}` | urejanje albuma (tudi sprememba stanja objave) |
+| DELETE | `/albumi/{id}` | brisanje albuma |
+| DELETE | `/albumi` | brisanje vseh albumov |
+| GET | `/albumi/{id}/slike` | shranjena postavitev slik v albumu |
+| PUT | `/albumi/{id}/slike` | zamenjava celotne postavitve (seznam `slikaId`, `x`, `y`, `width`, `height`, `rotation`, `zIndex`) |
 
 Swagger UI: `http://localhost:8080/swagger-ui.html`
 
@@ -502,7 +567,7 @@ docker ps
 
 Vsebnik `alumini-db` mora imeti status `Up`. Baza `alumini` se ustvari samodejno, tabele pa ustvari Hibernate ob prvem zagonu backenda.
 
-Ustavitev baze: `docker compose stop`. Podatki ostanejo v Docker volumnu. Ukaza `docker compose down -v` ne uporabljajte, če želite podatke obdržati.
+Ustavitev baze: `docker compose stop`. Podatki (tudi naložene slike, ker so v bazi) ostanejo v Docker volumnu. Ukaza `docker compose down -v` ne uporabljajte, če želite podatke obdržati.
 
 ### 3. Zagon backenda
 
@@ -550,13 +615,20 @@ spring.jpa.show-sql=true
 
 # uporabnik in geslo baze se prebereta iz te datoteke (ni v Gitu)
 spring.config.import=optional:classpath:application-local.properties
+
+spring.jpa.properties.hibernate.format_sql=true
+spring.web.cors.allowed-origins=http://localhost:3000
+
+# omejitev nalaganja datotek
+spring.servlet.multipart.max-file-size=30MB
+spring.servlet.multipart.max-request-size=30MB
 ```
 
 Uporabnik (`alumini`), geslo in ime baze se morajo ujemati z `docker-compose.yml` in `.env`.
 
 ### 4. Zagon frontenda
 
-V mapi s `package.json`:
+V mapi `Frontend`:
 
 ```bash
 npm install
@@ -600,6 +672,8 @@ Skripta `npm start` privzeto odpre **Firefox** (`cross-env BROWSER=firefox`). Č
 | `Unable to determine Dialect` | baza ne teče ali povezava ni pravilna |
 | 404 v Reactu na `/slike` | manjka `.env` z `REACT_APP_BASE_URL` |
 | `Module not found: axios` | zaženite `npm install` |
+| slike se ne prikažejo ali nalaganje ne uspe | preverite, ali backend teče in ali je `REACT_APP_BASE_URL` pravilen; backend sprejme datoteke do 30 MB (`spring.servlet.multipart.*`), vmesnik pa do 10 MB |
+| nalaganje se zavrne z »Dovoljene so samo slike« | podprti so samo jpg, jpeg in png |
 
 ---
 
@@ -662,19 +736,19 @@ Oblika: `tip: kratek opis v ukazni obliki`
 ### Java (backend)
 
 - Razredi: `PascalCase` (`SlikeController`), metode in spremenljivke: `camelCase`, konstante: `UPPER_SNAKE_CASE`.
-- Paketi so v malih črkah: `rest`, `dao`, `vao`.
-- Kontrolerji vsebujejo samo obravnavo HTTP zahtev, dostop do baze gre prek repozitorijev (`dao`).
+- Paketi so v malih črkah: `rest`, `services`, `dao`, `vao`.
+- Kontrolerji vsebujejo samo obravnavo HTTP zahtev; netrivialna logika (preverjanje, pretvorbe) je v `services`, dostop do baze gre prek repozitorijev (`dao`).
 - Za entitete uporabljamo Lombok (`@Data`); za JPA entitete poskrbimo za konstruktor brez argumentov.
-- Za manjkajoče zapise vračamo ustrezne HTTP kode (`404`) prek `ResponseStatusException`.
+- Za manjkajoče zapise vračamo ustrezne HTTP kode (`404`), na primer prek `ResponseEntity.notFound()` ali `ResponseStatusException`; klic `Optional.get()` brez preverjanja ni dovoljen.
 - Pot, parametri in `@PathVariable` morajo imeti enaka imena (npr. `/slike/{id}` in `@PathVariable("id")`).
 - Zamik: 4 presledki.
 
 ### JavaScript / React (frontend)
 
-- Komponente: `PascalCase`, datoteka ima isto ime kot komponenta (`SlikeTable.js`).
+- Komponente: `PascalCase`, datoteka ima isto ime kot komponenta (`UrediAlbum.jsx`), končnica `.jsx` za datoteke z JSX.
 - Spremenljivke in funkcije: `camelCase`.
 - Samo funkcijske komponente in React Hooks (`useState`, `useEffect`).
-- Vsi klici na backend gredo prek skupne `api` instance v `services/api.js`, nikoli prek golega `axios` z vpisanim naslovom.
+- Vsi klici na backend gredo prek skupne `api` instance v `services/api.jsx`, nikoli prek golega `axios` z vpisanim naslovom.
 - Naslov backenda je v okoljski spremenljivki, ne v kodi.
 - Vse uvoze za usmerjanje uvažamo iz enega paketa (`react-router`).
 - Zamik: 2 ali 4 presledki (v celotnem projektu enako), podpičja dosledno.
