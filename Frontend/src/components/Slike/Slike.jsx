@@ -29,6 +29,7 @@ import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import api from "../../services/api";
 import "../Albumi/Albumi.css"; // enak dizajn kot pri albumih
 import { slikaUrl } from "./SlikeTable";
+import AuthButton from "../Auth/AuthButton";
 
 const VELIKOST_STRANI = 6;
 const BARVE_NASLOVNIC = ["lavender", "peach", "blue", "green"];
@@ -122,6 +123,7 @@ export default function Slike() {
                 <Stack direction="row" spacing={1}>
                     <Button color="inherit" variant="contained" disableElevation>Slike</Button>
                     <Button component={Link} to="/albumi" color="inherit">Albumi</Button>
+                    <AuthButton />
                 </Stack>
             </Box>
 

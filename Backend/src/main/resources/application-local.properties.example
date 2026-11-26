@@ -1,2 +1,6 @@
 spring.datasource.username=alumini
 spring.datasource.password=root
+
+jwt.secret=ZAMENJAJ_Z_SVOJIM_BASE64_KLJUCEM_VSAJ_32_BAJTOV== 
+#v powershell napisi: [Convert]::ToBase64String((1..48 | ForEach-Object { Get-Random -Maximum 256 })) in napisi v jwt.secret
+jwt.expiration-ms=86400000

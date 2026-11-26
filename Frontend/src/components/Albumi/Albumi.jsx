@@ -33,6 +33,7 @@ import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import api from "../../services/api";
 import "./Albumi.css";
 import AlbumPlatno from "./AlbumPlatno";
+import AuthButton from "../Auth/AuthButton";
 
 const VELIKOST_STRANI = 6;
 const PRAZEN_OBRAZEC = { name: "", description: "" };
@@ -246,6 +247,7 @@ export default function Albumi() {
                 <Stack direction="row" spacing={1}>
                     <Button component={Link} to="/slike" color="inherit">Slike</Button>
                     <Button color="inherit" variant="contained" disableElevation>Albumi</Button>
+                    <AuthButton />
                 </Stack>
             </Box>
 
