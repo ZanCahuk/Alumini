@@ -173,6 +173,170 @@ Podrobni opisi vseh še neimplementiranih primerov uporabe (PU5 do PU17) so v [p
 
 ---
 
+## Razredni diagram
+
+Razredni diagram vključuje vse funkcionalnosti iz diagrama primerov uporabe (PU1–PU17), tudi tiste, ki še niso implementirane (uporabnik, administrator, feed, razporeditev slik v albumu). Urejljiva različica je v [`docs/razredni-diagram/Alumini.drawio`](docs/razredni-diagram/Alumini.drawio), spodnji diagram pa je zapisan v Mermaidu (GitHub ga izriše sam).
+
+```mermaid
+classDiagram
+direction TB
+
+namespace rest {
+    class UporabnikController {
+        +pridobiProfil(id: Integer) Uporabnik
+        +urediProfil(id: Integer, podatki: Uporabnik) Uporabnik
+    }
+    class SlikeController {
+        +pridobiOsebneSlike(q: String, page: int, size: int, sort: String) PagedModel~Slike~
+        +pridobiSliko(id: Integer) Slike
+        +prejmiDatoteko(id: Integer) byte[]
+        +dodajSliko(datoteka: MultipartFile, name: String) Slike
+        +urediSliko(id: Integer, slika: Slike) void
+        +izbrisiSliko(id: Integer) void
+    }
+    class AlbumiController {
+        +ustvariAlbum(album: Albumi) void
+        +pridobiOsebneAlbume(page: int, size: int) PagedModel~Albumi~
+        +isciOsebneAlbume(q: String, page: int, size: int) PagedModel~Albumi~
+        +pridobiFeed(page: int, size: int) PagedModel~Albumi~
+        +isciAlbume(q: String, page: int, size: int) PagedModel~Albumi~
+        +pridobiAlbum(id: Integer) Albumi
+        +objaviAlbum(id: Integer) void
+        +urediAlbum(id: Integer, album: Albumi) void
+        +izbrisiAlbum(id: Integer) void
+        +shraniRazporeditev(id: Integer, razporeditev: List~AlbumSlika~) void
+    }
+}
+
+namespace dao {
+    class JpaRepository~T, ID~ {
+        <<interface>>
+        +save(entity: T) T
+        +findById(id: ID) Optional~T~
+        +findAll(pageable: Pageable) Page~T~
+        +deleteById(id: ID) void
+    }
+    class UporabnikDao {
+        <<interface>>
+        +findByEmail(email: String) Uporabnik
+    }
+    class SlikeDao {
+        <<interface>>
+        +findByNameContainingIgnoreCaseOrTypeContainingIgnoreCase(name: String, type: String, pageable: Pageable) Page~Slike~
+    }
+    class AlbumiDao {
+        <<interface>>
+        +findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name: String, description: String, pageable: Pageable) Page~Albumi~
+        +findByStatus(status: String, pageable: Pageable) Page~Albumi~
+        +findByStatusAndNameContainingIgnoreCase(status: String, name: String, pageable: Pageable) Page~Albumi~
+    }
+}
+
+namespace vao {
+    class Uporabnik {
+        -Integer id
+        -String ime
+        -String priimek
+        -String email
+        -String opis
+        -String geslo
+        +posodobiPodatke(ime: String, priimek: String, email: String, opis: String) void
+    }
+    class Administrator
+    class Slike {
+        -Integer id
+        -String name
+        -String type
+        -String size
+        -LocalDateTime datumNalaganja
+        -byte[] podatkiSlike
+    }
+    class Albumi {
+        -Integer id
+        -String name
+        -String description
+        -String status
+        +objavi() void
+        +dodajSliko(slika: Slike, x: int, y: int, sirina: int, visina: int) AlbumSlika
+        +odstraniSliko(slika: Slike) void
+        +premakniSliko(slika: Slike, x: int, y: int) void
+        +spremeniVelikost(slika: Slike, sirina: int, visina: int) void
+    }
+    class AlbumSlika {
+        -int x
+        -int y
+        -int sirina
+        -int visina
+        -int zIndex
+        +premakni(x: int, y: int) void
+        +spremeniVelikost(sirina: int, visina: int) void
+    }
+}
+
+UporabnikController --> UporabnikDao : -uporabnikDao
+SlikeController --> SlikeDao : -slikeDao
+AlbumiController --> AlbumiDao : -albumiDao
+
+UporabnikDao --|> JpaRepository
+SlikeDao --|> JpaRepository
+AlbumiDao --|> JpaRepository
+
+UporabnikDao ..> Uporabnik : «bind»
+SlikeDao ..> Slike : «bind»
+AlbumiDao ..> Albumi : «bind»
+
+Administrator --|> Uporabnik
+Uporabnik "1" *-- "0..*" Slike
+Uporabnik "1" *-- "0..*" Albumi
+Albumi "1" *-- "0..*" AlbumSlika : razporeditev
+AlbumSlika "0..*" --> "1" Slike : slika
+```
+
+![Razredni diagram](Slike/Razredni_Diagram.png)
+
+### Uporabljene povezave
+
+| Povezava | Zapis | Pomen v diagramu |
+|---|---|---|
+| Dedovanje (generalizacija) | polna črta, prazen trikotnik | `Administrator` → `Uporabnik`; `SlikeDao`, `AlbumiDao`, `UporabnikDao` → `JpaRepository` |
+| Asociacija (usmerjena) | polna črta, odprta puščica | kontroler uporablja svoj DAO |
+| Odvisnost | črtkana črta, odprta puščica | DAO je vezan na entiteto (`«bind»`, generična parametra `<Entiteta, Integer>`) |
+| Kompozicija | polni romb pri celoti | `Uporabnik` vsebuje svoje `Slike` in `Albumi` (1 : 0..\*) |
+| Asociacijski razred | `AlbumSlika` med `Albumi` in `Slike` | postavitev slike v albumu (x, y, širina, višina, zIndex) |
+
+V `.drawio` datoteki je `AlbumSlika` pravi asociacijski razred (črtkana črta do asociacije `Albumi` 0..\* — 0..\* `Slike`). Mermaid tega ne podpira, zato je tam prikazan kot razred s kompozicijo do `Albumi` in asociacijo do `Slike`.
+
+### Opis razredov
+
+#### Paket `rest` (kontrolerji)
+
+| Razred | Naloga | Ključne metode |
+|---|---|---|
+| `SlikeController` | REST vmesnik za slike (`/slike`) | `pridobiOsebneSlike` – iskanje, paginacija in razvrščanje (PU1, PU2, PU6); `dodajSliko` – naloži datoteko in jo shrani (PU3, PU5); `urediSliko` (PU4); `izbrisiSliko`; `prejmiDatoteko` – vrne vsebino slike za prikaz |
+| `AlbumiController` | REST vmesnik za albume (`/albumi`) | `ustvariAlbum` (PU7); `pridobiOsebneAlbume` in `isciOsebneAlbume` (PU8, PU9); `objaviAlbum` (PU10); `pridobiFeed` (PU11); `isciAlbume` (PU12); `pridobiAlbum` (PU13); `urediAlbum` (PU17, ob istem klicu tudi administrator); `izbrisiAlbum`; `shraniRazporeditev` – shrani položaj in velikost slik v albumu |
+| `UporabnikController` | REST vmesnik za profile | `pridobiProfil` (PU14); `urediProfil` – lastni podatki (PU15), administrator ga uporabi za urejanje tujih profilov (PU16) |
+
+#### Paket `dao` (dostop do podatkov)
+
+| Razred | Naloga | Ključne metode |
+|---|---|---|
+| `JpaRepository<T, ID>` | Spring Data vmesnik z osnovnimi operacijami | `save`, `findById`, `findAll`, `deleteById` |
+| `SlikeDao` | Dostop do tabele slik | `findByNameContainingIgnoreCaseOrTypeContainingIgnoreCase` – iskanje po imenu ali tipu s paginacijo |
+| `AlbumiDao` | Dostop do tabele albumov | iskanje po imenu ali opisu; `findByStatus` – albumi za feed; `findByStatusAndNameContainingIgnoreCase` – iskanje med objavljenimi |
+| `UporabnikDao` | Dostop do tabele uporabnikov | `findByEmail` – iskanje uporabnika po e-pošti |
+
+#### Paket `vao` (entitete)
+
+| Razred | Naloga | Ključne metode |
+|---|---|---|
+| `Uporabnik` | Registriran uporabnik, lastnik slik in albumov | `posodobiPodatke` – spremeni ime, priimek, e-pošto in opis |
+| `Administrator` | Podrazred uporabnika s pravico urejanja albumov in profilov drugih | brez lastnih metod |
+| `Slike` | Naložena slika; podatki so v bazi (`podatkiSlike`, `bytea`) | samo atributi (getterji in setterji prek Lomboka) |
+| `Albumi` | Zbirka slik z vidnostjo `PUBLIC` ali `PRIVATE` | `objavi` – nastavi status na `PUBLIC`; `dodajSliko`, `odstraniSliko`; `premakniSliko`, `spremeniVelikost` – spreminjata položaj in velikost slike v albumu |
+| `AlbumSlika` | Asociacijski razred, ki pove, kje in kako velika je slika v albumu | `premakni`, `spremeniVelikost` |
+
+**Opomba:** atributi in metode, ki jih v kodi še ni (`Uporabnik`, `Administrator`, `AlbumSlika`, status v feedu, povezava lastnika), so del načrta in se bodo dodajali sproti.
+
 ## Uporabljene tehnologije
 
 ### Backend
